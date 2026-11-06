@@ -1544,14 +1544,15 @@ locationSyncStatus.setAttribute('role','status');
 $('printAllLocations').after(locationSyncStatus);
 let locationSyncBusy=false;
 const syncEndpoint='https://script.google.com/macros/s/AKfycbz3W-ai7YWLmrwQ8Eq6R6WCekGPpvllZLsjeHs024y9_Z-Jex4mQ-tOz1uKeQ4pOrv5QA/exec';
-function locationRequest(mode,name){
+function locationRequest(mode,name,password){return cloudRequest({mode,name,password})}
+function cloudRequest(payload){
   return new Promise((resolve,reject)=>{
     const id=crypto.randomUUID();
     const frame=document.createElement('iframe');
     frame.hidden=true;frame.name='dafu_'+id;
     const form=document.createElement('form');
     form.hidden=true;form.method='POST';form.action=syncEndpoint;form.target=frame.name;
-    for(const [field,value] of Object.entries({syncId:id,payload:JSON.stringify({mode,name})})){
+    for(const [field,value] of Object.entries({syncId:id,payload:JSON.stringify(payload)})){
       const input=document.createElement('input');
       input.type='hidden';input.name=field;input.value=value;form.append(input);
     }
@@ -1565,19 +1566,19 @@ function locationRequest(mode,name){
       const message=event.data;
       if(!/^https:\/\/(?:[a-z0-9-]+-script\.)?googleusercontent\.com$/i.test(event.origin)
         ||message?.type!=='dafu-locations'||message.id!==id)return;
-      if(!message.ok||!Array.isArray(message.locations))return finish(Error(message.message||'同步失败'));
-      finish(null,message.locations);
+      if(!message.ok)return finish(Error(message.message||'同步失败'));
+      finish(null,message.task||message.locations);
     }
     window.addEventListener('message',receive);
     document.body.append(frame,form);form.submit();
   });
 }
-async function syncLocations(mode='read',name=''){
+async function syncLocations(mode='read',name='',password=''){
   if(locationSyncBusy)return false;
   locationSyncBusy=true;
   locationSyncStatus.textContent='正在同步 Google 库位清单…';
   try{
-    state.locations=await locationRequest(mode,name);
+    state.locations=await locationRequest(mode,name,password);
     if(verifiedLocation&&!state.locations.includes(verifiedLocation)){
       verifiedLocation='';state.activeLocation='';
       if(camera)stopInventoryCamera();
@@ -1603,7 +1604,7 @@ $('locationList').addEventListener('click',event=>{
   const button=event.target.closest('[data-remove-location]');
   if(!button)return;
   event.stopImmediatePropagation();
-  if(!locationSyncBusy&&confirm('从 Google 库位清单删除 '+button.dataset.removeLocation+'？'))void syncLocations('remove',button.dataset.removeLocation);
+  if(!locationSyncBusy)askLocationPassword(button.dataset.removeLocation);
 },true);
 for(const id of ['homeLocations','manageLocationsBtn','addLocationBtn']){
   $(id).addEventListener('click',()=>void syncLocations());
@@ -1611,7 +1612,7 @@ for(const id of ['homeLocations','manageLocationsBtn','addLocationBtn']){
 window.addEventListener('focus',()=>void syncLocations());
 setInterval(()=>{if(!document.hidden)void syncLocations()},30000);
 $('exportLogsBtn').onclick=()=>csvFile([['Sequence','Time','Operator','Action','SKU','Details'],...state.logs.slice().reverse().map(l=>[l.seq,l.time,l.member,l.action,l.code,l.detail])],`盘点扫码流水_${state.task}.csv`);
-function snapshot(status){return{task:state.task,member:state.member,products:clone(state.products),logs:clone(state.logs),seq:state.seq,status,endedAt:status==='已结束'?now():''}}function nextBatch(d){const prefix=d.replace(/-/g,'')+'-';return Math.max(0,...[state.task,...state.archives.map(a=>a.task)].filter(x=>String(x).startsWith(prefix)).map(x=>Number(x.slice(prefix.length))||0))+1}function taskCode(){const d=$('taskDate').value,n=Number($('taskBatch').value);$('taskCode').value=d&&Number.isInteger(n)&&n>0&&n<=999?d.replace(/-/g,'')+'-'+String(n).padStart(2,'0'):''}function manage(){const d=date();$('taskDate').value=d;$('taskBatch').value=nextBatch(d);$('taskMember').value=state.member;taskCode();$('availableTasks').innerHTML=state.archives.map((a,i)=>`<div class="record row"><div><b>${esc(a.task)}</b><div class="muted">${esc(a.status)} · ${(a.products||[]).length} 种商品</div></div><button class="secondary" data-switch="${i}">进入</button></div>`).join('')||'<p class="muted">暂无其他任务</p>';document.querySelectorAll('[data-switch]').forEach(b=>b.onclick=()=>{restore(Number(b.dataset.switch));$('taskModal').classList.add('hidden')});$('taskModal').classList.remove('hidden')}function restore(i){const t=state.archives[i];if(!t)return;if(!confirm('进入任务 '+t.task+'？当前任务将自动保存。'))return;state.archives.splice(i,1);if(!state.ended&&(state.products.length||state.logs.length))state.archives.unshift(snapshot('暂停'));Object.assign(state,{task:t.task,member:t.member,products:clone(t.products||[]),logs:clone(t.logs||[]),seq:t.seq||0,ended:false});current='';verifiedLocation='';state.activeLocation='';save();render();showWork();toast('已进入任务 '+t.task)}$('manageBtn').onclick=manage;$('closeTaskModal').onclick=()=>$('taskModal').classList.add('hidden');$('taskDate').onchange=()=>{$('taskBatch').value=nextBatch($('taskDate').value);taskCode()};$('taskBatch').oninput=taskCode;$('createTask').onclick=()=>{const task=$('taskCode').value,member=$('taskMember').value.trim();if(!task||!member)return toast('请填写有效任务编号及操作人员');if([state.task,...state.archives.map(a=>a.task)].includes(task))return toast('该任务编号已存在');if(!confirm('创建新任务 '+task+'？当前盘点数据将保留。'))return;if(!state.ended&&(state.products.length||state.logs.length))state.archives.unshift(snapshot('暂停'));Object.assign(state,{task,member,products:[],logs:[],seq:0,ended:false});current='';verifiedLocation='';state.activeLocation='';save();$('taskModal').classList.add('hidden');render();showWork();toast('已创建任务 '+task)};$('endBtn').onclick=async()=>{if(state.ended)return;if(!confirm('结束当前盘点？统计将清零，记录保存在历史任务中。'))return;state.archives.unshift(snapshot('已结束'));state.products=[];state.logs=[];state.seq=0;state.ended=true;current='';if(camera){try{await camera.stop();camera.clear()}catch{}camera=null;$('camera').classList.add('hidden');$('cameraBtn').textContent='📷 摄像头'}verifiedLocation='';state.activeLocation='';save();render();showHome();toast('盘点已结束，历史数据已保存')};$('openSettings').onclick=()=>{$('memberInput').value=state.member;$('settingsModal').classList.remove('hidden')};$('openSettings').onkeydown=e=>{if(e.key==='Enter')$('openSettings').click()};$('closeSettings').onclick=()=>$('settingsModal').classList.add('hidden');$('saveSettings').onclick=()=>{const member=$('memberInput').value.trim();if(!member)return toast('操作人员必填');state.member=member;save();$('settingsModal').classList.add('hidden');render();toast('操作人员已保存')};
+function snapshot(status){return{sharedTask:state.sharedTask,task:state.task,member:state.member,products:clone(state.products),logs:clone(state.logs),seq:state.seq,status,endedAt:status==='已结束'?now():''}}function nextBatch(d){const prefix=d.replace(/-/g,'')+'-';return Math.max(0,...[state.task,...state.archives.map(a=>a.task)].filter(x=>String(x).startsWith(prefix)).map(x=>Number(x.slice(prefix.length))||0))+1}function taskCode(){const d=$('taskDate').value,n=Number($('taskBatch').value);$('taskCode').value=d&&Number.isInteger(n)&&n>0&&n<=999?d.replace(/-/g,'')+'-'+String(n).padStart(2,'0'):''}function manage(){const d=date();$('taskDate').value=d;$('taskBatch').value=nextBatch(d);$('taskMember').value=state.member;taskCode();$('availableTasks').innerHTML=state.archives.map((a,i)=>`<div class="record row"><div><b>${esc(a.task)}</b><div class="muted">${esc(a.status)} · ${(a.products||[]).length} 种商品</div></div><button class="secondary" data-switch="${i}">进入</button></div>`).join('')||'<p class="muted">暂无其他任务</p>';document.querySelectorAll('[data-switch]').forEach(b=>b.onclick=()=>{restore(Number(b.dataset.switch));$('taskModal').classList.add('hidden')});$('taskModal').classList.remove('hidden')}function restore(i){const t=state.archives[i];if(!t)return;if(!confirm('进入任务 '+t.task+'？当前任务将自动保存。'))return;state.archives.splice(i,1);if(!state.ended&&(state.products.length||state.logs.length))state.archives.unshift(snapshot('暂停'));Object.assign(state,{task:t.task,sharedTask:t.sharedTask,member:t.member,products:clone(t.products||[]),logs:clone(t.logs||[]),seq:t.seq||0,ended:false});current='';verifiedLocation='';state.activeLocation='';save();render();showWork();toast('已进入任务 '+t.task)}$('manageBtn').onclick=manage;$('closeTaskModal').onclick=()=>$('taskModal').classList.add('hidden');$('taskDate').onchange=()=>{$('taskBatch').value=nextBatch($('taskDate').value);taskCode()};$('taskBatch').oninput=taskCode;$('createTask').onclick=()=>{const task=$('taskCode').value,member=$('taskMember').value.trim();if(!task||!member)return toast('请填写有效任务编号及操作人员');if([state.task,...state.archives.map(a=>a.task)].includes(task))return toast('该任务编号已存在');if(!confirm('创建新任务 '+task+'？当前盘点数据将保留。'))return;if(!state.ended&&(state.products.length||state.logs.length))state.archives.unshift(snapshot('暂停'));Object.assign(state,{task,member,products:[],logs:[],seq:0,ended:false});current='';verifiedLocation='';state.activeLocation='';save();$('taskModal').classList.add('hidden');render();showWork();toast('已创建任务 '+task)};$('endBtn').onclick=async()=>{if(state.ended)return;if(!confirm('结束当前盘点？统计将清零，记录保存在历史任务中。'))return;state.archives.unshift(snapshot('已结束'));state.products=[];state.logs=[];state.seq=0;state.ended=true;current='';if(camera){try{await camera.stop();camera.clear()}catch{}camera=null;$('camera').classList.add('hidden');$('cameraBtn').textContent='📷 摄像头'}verifiedLocation='';state.activeLocation='';save();render();showHome();toast('盘点已结束，历史数据已保存')};$('openSettings').onclick=()=>{$('memberInput').value=state.member;$('settingsModal').classList.remove('hidden')};$('openSettings').onkeydown=e=>{if(e.key==='Enter')$('openSettings').click()};$('closeSettings').onclick=()=>$('settingsModal').classList.add('hidden');$('saveSettings').onclick=()=>{const member=$('memberInput').value.trim();if(!member)return toast('操作人员必填');state.member=member;save();$('settingsModal').classList.add('hidden');render();toast('操作人员已保存')};
 // 导航、库位扫码验证和 A4 库位码打印
 function updateGate(){const ready=!!verifiedLocation&&!state.ended;$('locationGateStatus').className='notice '+(ready?'success':'info');$('locationGateStatus').textContent=ready?'✓ 库位 '+verifiedLocation+' 已验证，可开始扫描 SKU':'尚未扫描库位码，禁止商品盘点';$('locationBarcode').value=ready?verifiedLocation:'';$('barcode').disabled=!ready;$('scanBtn').disabled=!ready;$('keyBtn').disabled=!ready;$('activeLocation').disabled=true;$('locationSummary').textContent=ready?'已扫码验证库位：'+verifiedLocation:'请扫描库位码后开始盘点';$('verifiedLocationDisplay').textContent=ready?verifiedLocation:'—';}
 function setStep(step){document.body.classList.remove('step-home','step-location','step-sku');document.body.classList.add('step-'+step);if(step==='location'){$('locationBarcode').value='';$('locationKeypad').classList.add('hidden');$('locationKeyBtn').textContent='⌨ 打开库位数字字母键盘';setTimeout(()=>{if(viewMode==='work')$('locationBarcode').focus({preventScroll:true})},40)}}
@@ -1629,6 +1630,106 @@ let printKind='location';function printLocations(codes){printKind='location';doc
 function printSkus(codes){printKind='sku';document.body.classList.remove('location-label-mode');document.body.classList.add('sku-label-mode');$('skuPageSizeRule').textContent='';$('printPage').querySelector('.print-head').textContent='DAFU 货号 / SKU 标签 · 100 × 150 mm';$('doPrint').textContent='🖨 100×150mm 打印 / 保存 PDF';$('closePrint').textContent='✕ 关闭打印页 · 返回货号设置';try{$('printSheet').innerHTML=codes.map(code=>`<div class="print-label"><small class="sku-dafu-brand">DAFU</small><div class="qr">${qrSvg(code)}</div><strong>${esc(code)}</strong><small>扫码盘点 · 同 SKU 自动累计</small></div>`).join('')}catch(e){toast('二维码生成失败，请检查货号长度');return} $('skuPrintModal').classList.add('hidden');document.body.classList.add('preview-print');$('printPage').style.display='block';window.scrollTo(0,0)}$('generateSkuPrint').onclick=()=>{const codes=[...new Set($('skuPrintInput').value.split(/\r?\n/).map(x=>x.trim().toUpperCase()).filter(Boolean))];if(!codes.length)return toast('请至少输入一个 SKU');if(codes.some(x=>x.length>80))return toast('单个 SKU 最多 80 个字符');printSkus(codes)}; $('printAllLocations').onclick=()=>{printLocations(state.locations);$('locationModal').classList.add('hidden')};document.addEventListener('DOMContentLoaded',()=>{$('doPrint').onclick=()=>{if(!$('printSheet').children.length){toast('请先生成二维码标签');return;}document.body.classList.add('preview-print');$('printPage').style.display='block';try{window.focus();window.print()}catch(e){toast('浏览器未能打开打印窗口，请按 Ctrl+P 手动打印')}};$('closePrint').onclick=()=>{$('printPage').style.display='none';document.body.classList.remove('preview-print','sku-label-mode','location-label-mode');$('skuPageSizeRule').textContent='';if(printKind==='sku'){$('skuPrintModal').classList.remove('hidden')}else{$('locationModal').classList.remove('hidden');renderLocations()}window.scrollTo(0,0)};});
 // 增加每个库位单独打印按钮
 const oldRenderLocations=renderLocations;renderLocations=function(){oldRenderLocations();document.querySelectorAll('[data-use-location]').forEach(b=>{b.textContent='扫码启用';b.disabled=true});document.querySelectorAll('[data-remove-location]').forEach(b=>{const p=document.createElement('button');p.type='button';p.className='secondary';p.textContent='打印码';p.onclick=()=>{printLocations([b.dataset.removeLocation]);$('locationModal').classList.add('hidden')};b.before(p)})};
+const cloudControls=document.createElement('div');
+cloudControls.style.cssText='display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 12px';
+cloudControls.innerHTML='<button type="button" id="syncSharedTask">同步云端</button><details id="cloudTaskMenu"><summary>共享任务 ▾</summary><button type="button" id="createSharedTask">创建共享任务</button> <button type="button" id="joinSharedTask">输入任务码加入</button></details><span id="sharedTaskStatus" role="status"></span>';
+$('homePage').before(cloudControls);
+const cloudDialog=document.createElement('dialog');
+cloudDialog.style.cssText='max-width:min(90vw,420px);border:1px solid #a8cbc4;border-radius:14px;padding:20px';
+cloudDialog.innerHTML='<form method="dialog"><label id="cloudPromptLabel"></label><input id="cloudPromptValue" required><div style="margin-top:12px"><button value="ok">确定</button> <button value="cancel" formnovalidate>取消</button></div></form>';
+document.body.append(cloudDialog);
+function cloudPrompt(label,type='text'){
+  $('cloudPromptLabel').textContent=label;
+  $('cloudPromptLabel').htmlFor='cloudPromptValue';
+  const field=$('cloudPromptValue');
+  field.value='';field.type=type;cloudDialog.returnValue='';
+  return new Promise(resolve=>{
+    cloudDialog.addEventListener('close',()=>resolve(cloudDialog.returnValue==='ok'?field.value.trim():''),{once:true});
+    cloudDialog.showModal();field.focus();
+  });
+}
+async function askLocationPassword(name){
+  const password=await cloudPrompt('请输入删除库位 '+name+' 的密码','password');
+  if(password)void syncLocations('remove',name,password);
+}
+const busyOverlay=document.createElement('dialog');
+busyOverlay.style.cssText='border:0;border-radius:18px;text-align:center;padding:28px;min-width:190px';
+busyOverlay.innerHTML='<style>@keyframes dafuCloudPulse{50%{transform:scale(.83);opacity:.55}}@media(prefers-reduced-motion:no-preference){.dafu-cloud-logo{animation:dafuCloudPulse 1s ease-in-out infinite}}</style><div class="dafu-cloud-logo" style="font-size:32px;font-weight:900;color:#167d73">DAFU</div><p role="status">正在同步 Google 云端…</p>';
+const brand=document.querySelector('img[alt=DAFU]');
+if(brand){const logo=brand.cloneNode(false);logo.style.cssText='width:92px;height:64px;object-fit:contain';busyOverlay.querySelector('.dafu-cloud-logo').replaceChildren(logo)}
+busyOverlay.addEventListener('cancel',event=>event.preventDefault());
+document.body.append(busyOverlay);
+function taskData(){
+  return {task:state.task,products:state.products,logs:state.logs,seq:state.seq,ended:state.ended};
+}
+function taskStatus(message){
+  $('sharedTaskStatus').textContent=message|| (state.sharedTask?'任务码：'+state.sharedTask.code:'尚未加入共享任务');
+}
+function applyShared(record,mode){
+  const sameTask=mode==='create'||state.sharedTask?.code===record.code;
+  if(!sameTask){
+    if(state.products.length||state.logs.length)state.archives.unshift(snapshot('暂停'));
+    verifiedLocation='';state.activeLocation='';current='';
+    if(camera)stopInventoryCamera();
+  }
+  const {task,products,logs,seq,ended}=record.data;
+  Object.assign(state,{task,products,logs,seq,ended,sharedTask:{code:record.code,revision:record.revision,baseline:JSON.stringify(record.data)}});
+  save();render();renderHome();
+  if(!sameTask||ended)showHome();
+  taskStatus('已同步 · 任务码：'+record.code);
+}
+async function sharedAction(mode,code){
+  if(busyOverlay.open)return;
+  if(camera)stopInventoryCamera();
+  const baseline=state.sharedTask?.baseline;
+  const data=taskData();
+  const changed=JSON.stringify(data)!==baseline;
+  const upload=mode==='create'||(mode==='sync'&&changed);
+  const payload={kind:'shared-task',mode,code,revision:state.sharedTask?.revision,data:upload?data:undefined};
+  busyOverlay.showModal();
+  try{
+    const record=await cloudRequest(payload);
+    if(!record?.data||!record.code)throw Error('云端返回的任务格式无效');
+    applyShared(record,mode);
+  }catch(error){
+    taskStatus(error.message);
+    toast(error.message);
+  }finally{busyOverlay.close()}
+}
+$('createSharedTask').onclick=()=>{
+  $('cloudTaskMenu').open=false;
+  if(state.sharedTask)return toast('当前任务已有共享码');
+  void sharedAction('create',crypto.randomUUID().replace(/-/g,'').toUpperCase());
+};
+$('joinSharedTask').onclick=async()=>{
+  $('cloudTaskMenu').open=false;
+  const code=(await cloudPrompt('输入共享任务码')).toUpperCase();
+  if(!code)return;
+  if(!/^[A-F0-9]{32}$/.test(code))return toast('共享任务码格式无效');
+  if(state.sharedTask?.code===code){
+    if(JSON.stringify(taskData())===state.sharedTask.baseline)return void sharedAction('sync',code);
+    if(!confirm('读取云端版本？本机改动会先保存到历史任务。'))return;
+    state.archives.unshift(snapshot('同步前备份'));save();
+  }
+  void sharedAction('join',code);
+};
+$('syncSharedTask').onclick=()=>{
+  if(!state.sharedTask){$('cloudTaskMenu').open=true;return}
+  void sharedAction('sync',state.sharedTask.code);
+};
+$('homeJoin').onclick=()=>{$('cloudTaskMenu').open=true;$('joinSharedTask').click()};
+const createLocal=$('createTask').onclick;
+$('createTask').onclick=()=>{
+  const before=state.task;
+  const previous=state.sharedTask;
+  createLocal();
+  if(state.task!==before){
+    delete state.sharedTask;save();taskStatus();
+    void sharedAction('create',crypto.randomUUID().replace(/-/g,'').toUpperCase());
+  }else if(previous)state.sharedTask=previous;
+};
+taskStatus();
+
 showHome();
 render();renderLocations();startLocationSync();})();
 </script><script defer="" src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script><section id="printPage"><h2 class="print-head">DAFU 仓库库位二维码</h2><div class="print-actions"><button class="primary" id="doPrint">🖨 A4 打印 / 保存 PDF</button><button class="secondary" id="closePrint">✕ 关闭打印页 · 返回库位设置</button></div><div class="print-sheet" id="printSheet"></div></section><script>
