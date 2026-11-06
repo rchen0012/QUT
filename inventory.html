@@ -1789,7 +1789,33 @@ $('createTask').onclick=async()=>{
 taskStatus();
 
 showHome();
-render();renderLocations();startLocationSync();})();
+render();renderLocations();startLocationSync();
+const startupDialog=document.createElement('dialog');
+startupDialog.className='cloud-dialog';
+startupDialog.setAttribute('aria-labelledby','startupTitle');
+startupDialog.innerHTML='<style>.startup-brand{text-align:center;padding:12px 0}.startup-brand img{width:110px;height:76px;object-fit:contain}.startup-brand strong{display:block;font-size:1.5rem;color:#167d73}.startup-brand p{margin:.4rem 0;color:#42675f}.startup-form[hidden]{display:none}</style><div class="startup-brand"><div class="dafu-cloud-logo" id="startupLogo"><strong>DAFU</strong></div><h2 id="startupTitle">DAFU 库存盘点</h2><p id="startupMessage" role="status">正在启动库存盘点系统…</p></div><form class="startup-form" id="startupForm" hidden><label for="startupMember">操作员姓名</label><input id="startupMember" autocomplete="off" maxlength="100" required><div class="cloud-dialog-actions"><button value="ok" type="submit">进入工作台</button></div></form>';
+startupDialog.addEventListener('cancel',event=>event.preventDefault());
+const startupBrand=document.querySelector('img[alt=DAFU]');
+document.body.append(startupDialog);
+if(startupBrand)$('startupLogo').replaceChildren(startupBrand.cloneNode(false));
+$('startupMember').value=state.member||'';
+$('startupForm').onsubmit=event=>{
+  event.preventDefault();
+  const field=$('startupMember');
+  const member=field.value.trim();
+  if(!member){field.setCustomValidity('请输入操作员姓名');field.reportValidity();return}
+  state.member=member;save();render();startupDialog.close();
+};
+$('startupMember').oninput=event=>event.target.setCustomValidity('');
+startupDialog.showModal();
+setTimeout(()=>{
+  $('startupLogo').classList.remove('dafu-cloud-logo');
+  $('startupMessage').textContent='请确认本次盘点的操作员';
+  $('startupForm').hidden=false;
+  $('startupMember').focus();$('startupMember').select();
+},matchMedia('(prefers-reduced-motion: reduce)').matches?0:850);
+
+})();
 </script><script defer="" src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script><section id="printPage"><h2 class="print-head">DAFU 仓库库位二维码</h2><div class="print-actions"><button class="primary" id="doPrint">🖨 A4 打印 / 保存 PDF</button><button class="secondary" id="closePrint">✕ 关闭打印页 · 返回库位设置</button></div><div class="print-sheet" id="printSheet"></div></section><script>
 /* 独立打印按钮保障：即使主程序部分初始化失败，也可触发打印。 */
 (function(){
