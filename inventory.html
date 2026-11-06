@@ -217,6 +217,17 @@ body.step-location #locationGate #camera{
 .cloud-menu button:hover,.cloud-menu button:focus-visible{background:#eaf7f3}
 #sharedTaskStatus{font-size:.875rem;color:#42675f;overflow-wrap:anywhere}
 @media(max-width:440px){#sharedTaskStatus{flex-basis:100%}}
+</style><style>
+.cloud-menu .cloud-danger{color:#a12832;border-top:1px solid #f0e1e3;border-radius:0 0 6px 6px;margin-top:4px}
+.cloud-dialog{width:min(calc(100% - 32px),420px);border:1px solid #c9e4de;border-radius:18px;padding:22px;color:#183f38;box-shadow:0 18px 52px #0d362f33}
+.cloud-dialog::backdrop{background:#102b2960}
+.cloud-dialog form{display:grid;gap:12px}
+.cloud-dialog label{font-size:1rem;font-weight:700}
+.cloud-dialog input{box-sizing:border-box;width:100%;min-height:46px;padding:10px 12px;border:1px solid #aaccc4;border-radius:9px;font:inherit;background:#f7fbfa;color:#143f36}
+.cloud-dialog input:focus{outline:2px solid #167d73;outline-offset:2px}
+.cloud-dialog-actions{display:flex;justify-content:flex-end;gap:8px}
+.cloud-dialog-actions button{min-height:44px;padding:8px 16px;border:1px solid #c3ddd7;border-radius:9px;background:white;color:#164c43;font:inherit;cursor:pointer}
+.cloud-dialog-actions button[value=ok]{background:#167d73;color:white;border-color:#167d73}
 </style></head><body><datalist id="locationOptions"></datalist><div class="app"><header class="hero"><div class="brand"><img alt="DAFU" onerror="this.style.display='none'" src="images/form-logonova1.png"/><h1>库存盘点系统</h1></div><p>仓库扫码 · 库位管理 · 库存差异核对</p><div class="sheet" id="openSettings" role="button" tabindex="0"><div class="row"><strong>📦 DAFU · 库存盘点</strong><span class="pill">本地模式</span></div><div class="muted" id="taskDisplay"></div></div></header><section id="homePage"><h2 class="home-title">DAFU 库存盘点 · 工作台</h2><p class="hint" style="text-align:center">请选择操作：先设置库位，再创建或加入盘点任务</p><div class="home-icon-grid">
 <button class="home-action" id="homeCreate"><span class="nav-icon"><img src="images/logo1.png" alt="导航 Logo 1" loading="eager" onerror="this.style.display='none';this.parentElement.classList.add('logo-missing')"></span>创建盘点任务<small>新建日期批次和操作人员</small></button>
 <button class="home-action" id="homeJoin"><span class="nav-icon"><img src="images/logo2.png" alt="导航 Logo 2" loading="eager" onerror="this.style.display='none';this.parentElement.classList.add('logo-missing')"></span>继续盘点任务<small>进入本机已有任务</small></button>
@@ -1649,17 +1660,17 @@ function newTaskCode(){
 }
 const cloudControls=document.createElement('div');
 cloudControls.className='cloud-controls';
-cloudControls.innerHTML='<button type="button" id="syncSharedTask">同步云端</button><details id="cloudTaskMenu"><summary>共享任务 <span aria-hidden="true">▾</span></summary><div class="cloud-menu"><button type="button" id="createSharedTask">创建共享任务</button> <button type="button" id="joinSharedTask">输入任务码加入</button></div></details><span id="sharedTaskStatus" role="status"></span>';
+cloudControls.innerHTML='<button type="button" id="syncSharedTask">同步云端</button><details id="cloudTaskMenu"><summary>共享任务 <span aria-hidden="true">▾</span></summary><div class="cloud-menu"><button type="button" id="createSharedTask">创建共享任务</button> <button type="button" id="joinSharedTask">输入任务码加入</button><button type="button" id="clearSharedCloud" class="cloud-danger">清空云端数据</button></div></details><span id="sharedTaskStatus" role="status"></span>';
 $('homePage').before(cloudControls);
 const cloudDialog=document.createElement('dialog');
-cloudDialog.style.cssText='max-width:min(90vw,420px);border:1px solid #a8cbc4;border-radius:14px;padding:20px';
-cloudDialog.innerHTML='<form method="dialog"><label id="cloudPromptLabel"></label><input id="cloudPromptValue" required><div style="margin-top:12px"><button value="ok">确定</button> <button value="cancel" formnovalidate>取消</button></div></form>';
+cloudDialog.className='cloud-dialog';
+cloudDialog.innerHTML='<form method="dialog"><label id="cloudPromptLabel"></label><input id="cloudPromptValue" required autocomplete="off"><div class="cloud-dialog-actions"><button value="cancel" formnovalidate>取消</button><button value="ok">确定</button></div></form>';
 document.body.append(cloudDialog);
 function cloudPrompt(label,type='text'){
   $('cloudPromptLabel').textContent=label;
   $('cloudPromptLabel').htmlFor='cloudPromptValue';
   const field=$('cloudPromptValue');
-  field.value='';field.type=type;cloudDialog.returnValue='';
+  field.value='';field.type=type;field.inputMode=(label.startsWith('输入共享任务码')||label.includes('8 位验证码'))?'numeric':'text';cloudDialog.returnValue='';
   return new Promise(resolve=>{
     cloudDialog.addEventListener('close',()=>resolve(cloudDialog.returnValue==='ok'?field.value.trim():''),{once:true});
     cloudDialog.showModal();field.focus();
@@ -1729,6 +1740,23 @@ $('joinSharedTask').onclick=async()=>{
     state.archives.unshift(snapshot('同步前备份'));save();
   }
   void sharedAction('join',code);
+};
+$('clearSharedCloud').onclick=async()=>{
+  $('cloudTaskMenu').open=false;
+  const key=await cloudPrompt('输入团队上传密钥','password');
+  if(!key)return;
+  const phrase=await cloudPrompt('将清空所有云端任务和盘点记录，保留库位。请输入 8 位验证码','password');
+  if(!/^[0-9]{8}$/.test(phrase))return toast('请输入 8 位验证码','password');
+  if(camera)stopInventoryCamera();
+  busyOverlay.showModal();
+  try{
+    const result=await cloudRequest({kind:'clear-cloud',key,phrase});
+    if(!result?.cleared)throw Error('未收到清空回执');
+    delete state.sharedTask;
+    for(const task of state.archives)delete task.sharedTask;
+    save();taskStatus('云端盘点数据已清空，库位和本机数据已保留');
+  }catch(error){taskStatus(error.message);toast(error.message)}
+  finally{busyOverlay.close()}
 };
 $('syncSharedTask').onclick=()=>{
   if(!state.sharedTask){$('cloudTaskMenu').open=true;return}
