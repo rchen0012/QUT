@@ -1541,17 +1541,8 @@ function postToGoogle(endpoint,key,payload){
 }
 const locationSyncStatus=document.createElement('p');
 locationSyncStatus.setAttribute('role','status');
-const connectLocations=document.createElement('button');
-connectLocations.type='button';
-connectLocations.className='secondary';
-connectLocations.textContent='连接 Google 库位清单';
-$('printAllLocations').after(connectLocations,locationSyncStatus);
-const locationKeyField=document.createElement('input');
-locationKeyField.type='password';
-locationKeyField.placeholder='团队上传密钥';
-locationKeyField.setAttribute('aria-label','团队上传密钥');
-connectLocations.before(locationKeyField);
-let locationSyncKey='', locationSyncBusy=false;
+$('printAllLocations').after(locationSyncStatus);
+let locationSyncBusy=false;
 const syncEndpoint='https://script.google.com/macros/s/AKfycbz3W-ai7YWLmrwQ8Eq6R6WCekGPpvllZLsjeHs024y9_Z-Jex4mQ-tOz1uKeQ4pOrv5QA/exec';
 function locationRequest(mode,name){
   return new Promise((resolve,reject)=>{
@@ -1560,7 +1551,7 @@ function locationRequest(mode,name){
     frame.hidden=true;frame.name='dafu_'+id;
     const form=document.createElement('form');
     form.hidden=true;form.method='POST';form.action=syncEndpoint;form.target=frame.name;
-    for(const [field,value] of Object.entries({syncId:id,key:locationSyncKey,payload:JSON.stringify({mode,name})})){
+    for(const [field,value] of Object.entries({syncId:id,payload:JSON.stringify({mode,name})})){
       const input=document.createElement('input');
       input.type='hidden';input.name=field;input.value=value;form.append(input);
     }
@@ -1582,7 +1573,7 @@ function locationRequest(mode,name){
   });
 }
 async function syncLocations(mode='read',name=''){
-  if(!locationSyncKey||locationSyncBusy)return false;
+  if(locationSyncBusy)return false;
   locationSyncBusy=true;
   locationSyncStatus.textContent='正在同步 Google 库位清单…';
   try{
@@ -1595,7 +1586,6 @@ async function syncLocations(mode='read',name=''){
     }
     save();renderLocations();
     locationSyncStatus.textContent='已同步 Google 表格 · '+state.locations.length+' 个库位';
-    connectLocations.textContent='更换团队密钥';
     return true;
   }catch(error){
     locationSyncStatus.textContent=error.message;
@@ -1603,29 +1593,16 @@ async function syncLocations(mode='read',name=''){
     return false;
   }finally{locationSyncBusy=false}
 }
-function startLocationSync(){
-  try{locationSyncKey=localStorage.getItem('dafu_sheet_upload_key')||''}catch{}
-  if(locationSyncKey)void syncLocations();
-  else locationSyncStatus.textContent='首次使用请连接 Google 库位清单';
-}
-connectLocations.onclick=async()=>{
-  if(locationSyncBusy)return;
-  const key=locationKeyField.value.trim();
-  if(!key){locationKeyField.focus();locationSyncStatus.textContent='请输入团队上传密钥';return}
-  locationSyncKey=key;
-  if(await syncLocations()){locationKeyField.value='';try{localStorage.setItem('dafu_sheet_upload_key',key)}catch{}}
-};
+function startLocationSync(){void syncLocations()}
 $('saveLocationBtn').onclick=async()=>{
   const name=$('newLocationInput').value.trim();
   if(!name)return toast('请输入库位编号');
-  if(!locationSyncKey)return toast('请先连接 Google 库位清单');
   if(await syncLocations('add',name))$('newLocationInput').value='';
 };
 $('locationList').addEventListener('click',event=>{
   const button=event.target.closest('[data-remove-location]');
   if(!button)return;
   event.stopImmediatePropagation();
-  if(!locationSyncKey)return toast('请先连接 Google 库位清单');
   if(!locationSyncBusy&&confirm('从 Google 库位清单删除 '+button.dataset.removeLocation+'？'))void syncLocations('remove',button.dataset.removeLocation);
 },true);
 for(const id of ['homeLocations','manageLocationsBtn','addLocationBtn']){
