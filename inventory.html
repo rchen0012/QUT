@@ -1684,7 +1684,7 @@ function previewLocationPdf(images,width,height,codes,sku=false){
   const dialog=document.createElement('dialog');
   dialog.className='cloud-dialog';
   dialog.style.cssText='width:min(calc(100% - 24px),780px);max-height:88dvh;overflow:auto';
-  const title=sku?'SKU 标签 PDF 预览':'库位 PDF 预览';
+  const title=sku?'SKU 标签预览':'库位 PDF 预览';
   dialog.setAttribute('aria-label',title);
   dialog.innerHTML='<div style="position:sticky;top:0;background:white;padding:4px 0 12px;z-index:1"><h2 style="margin:0 0 8px">库位 PDF 预览</h2><p class="hint"></p><div class="cloud-dialog-actions"><button type="button" value="close">返回库位管理</button><button type="button" value="ok">下载 PDF</button></div></div><div class="location-pdf-pages" style="display:grid;gap:12px"></div>';
   dialog.querySelector('h2').textContent=title;
@@ -1699,18 +1699,38 @@ function previewLocationPdf(images,width,height,codes,sku=false){
     return url;
   });
   dialog.querySelector('[value=close]').onclick=()=>dialog.close();
-  dialog.querySelector('[value=ok]').onclick=()=>downloadLocationPdf(images,width,height,sku);
+  const action=dialog.querySelector('[value=ok]');
   if(sku){
-    const open=document.createElement('button');open.type='button';open.textContent='打开 PDF 打印';
-    open.onclick=()=>downloadLocationPdf(images,width,height,true,true);
-    dialog.querySelector('[value=ok]').before(open);
-  }
+    action.textContent='打印 SKU 标签';
+    action.onclick=()=>printSkuPages(urls,action);
+  }else action.onclick=()=>downloadLocationPdf(images,width,height);
   dialog.addEventListener('close',()=>{urls.forEach(url=>URL.revokeObjectURL(url));dialog.remove()},{once:true});
   document.body.append(dialog);dialog.showModal();
 }
 
-function downloadLocationPdf(images,imageWidth,imageHeight,sku=false,open=false){
-  const width=((sku?100:297)*72/25.4).toFixed(4),height=((sku?150:210)*72/25.4).toFixed(4);
+function printSkuPages(urls,button){
+  if(button.disabled)return;
+  button.disabled=true;
+  const frame=document.createElement('iframe');
+  frame.title='SKU 标签打印';
+  frame.style.cssText='position:fixed;left:-200vw;top:0;width:100mm;height:150mm;border:0';
+  const cleanup=()=>{frame.remove();button.disabled=false};
+  frame.addEventListener('load',async()=>{
+    try{
+      const win=frame.contentWindow;
+      await Promise.all(Array.from(frame.contentDocument.images,image=>image.decode()));
+      win.addEventListener('afterprint',cleanup,{once:true});
+      win.focus();
+      win.print();
+      setTimeout(cleanup,120000);
+    }catch(error){cleanup();toast('无法打开 SKU 打印窗口：'+error.message)}
+  },{once:true});
+  frame.srcdoc='<!doctype html><meta charset="utf-8"><title>DAFU SKU 标签</title><style>@page{size:100mm 150mm;margin:0}html,body{margin:0;padding:0}img{display:block;width:100mm;height:150mm;break-inside:avoid}img:not(:last-child){break-after:page;page-break-after:always}</style>'+urls.map(url=>'<img src="'+url+'" alt="">').join('');
+  document.body.append(frame);
+}
+
+function downloadLocationPdf(images,imageWidth,imageHeight){
+  const width=(297*72/25.4).toFixed(4),height=(210*72/25.4).toFixed(4);
   const encoder=new TextEncoder(),parts=[],offsets=[0];
   let length=0;
   function add(value){const bytes=typeof value==='string'?encoder.encode(value):value;parts.push(bytes);length+=bytes.length}
@@ -1735,9 +1755,7 @@ function downloadLocationPdf(images,imageWidth,imageHeight,sku=false,open=false)
   add('trailer\n<< /Size '+offsets.length+' /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF\n');
   const url=URL.createObjectURL(new Blob(parts,{type:'application/pdf'}));
   const link=document.createElement('a');
-  link.href=url;
-  if(open){link.target='_blank';link.rel='noopener'}
-  else link.download=sku?'DAFU_SKU_100x150mm.pdf':'DAFU_库位二维码_A4.pdf';
+  link.href=url;link.download='DAFU_库位二维码_A4.pdf';
   document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
 }
 
@@ -1763,7 +1781,7 @@ function printSkus(codes){
       return Uint8Array.from(atob(jpeg),char=>char.charCodeAt(0));
     });
     previewLocationPdf(images,canvas.width,canvas.height,codes,true);
-  }catch(error){toast('SKU PDF 生成失败：'+error.message)}
+  }catch(error){toast('SKU 标签生成失败：'+error.message)}
 }
 
 $('generateSkuPrint').onclick=()=>{const codes=[...new Set($('skuPrintInput').value.split(/\r?\n/).map(x=>x.trim().toUpperCase()).filter(Boolean))];if(!codes.length)return toast('请至少输入一个 SKU');if(codes.some(x=>x.length>80))return toast('单个 SKU 最多 80 个字符');printSkus(codes)}; $('printAllLocations').onclick=()=>{printLocations(state.locations)};document.addEventListener('DOMContentLoaded',()=>{$('doPrint').onclick=()=>{if(!$('printSheet').children.length){toast('请先生成二维码标签');return;}document.body.classList.add('preview-print');$('printPage').style.display='block';try{window.focus();window.print()}catch(e){toast('浏览器未能打开打印窗口，请按 Ctrl+P 手动打印')}};$('closePrint').onclick=()=>{$('printPage').style.display='none';document.body.classList.remove('preview-print','sku-label-mode','location-label-mode');$('skuPageSizeRule').textContent='';if(printKind==='sku'){$('skuPrintModal').classList.remove('hidden')}else{$('locationModal').classList.remove('hidden');renderLocations()}window.scrollTo(0,0)};});
