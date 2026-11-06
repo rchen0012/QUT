@@ -1546,6 +1546,11 @@ connectLocations.type='button';
 connectLocations.className='secondary';
 connectLocations.textContent='连接 Google 库位清单';
 $('printAllLocations').after(connectLocations,locationSyncStatus);
+const locationKeyField=document.createElement('input');
+locationKeyField.type='password';
+locationKeyField.placeholder='团队上传密钥';
+locationKeyField.setAttribute('aria-label','团队上传密钥');
+connectLocations.before(locationKeyField);
 let locationSyncKey='', locationSyncBusy=false;
 const syncEndpoint='https://script.google.com/macros/s/AKfycbz3W-ai7YWLmrwQ8Eq6R6WCekGPpvllZLsjeHs024y9_Z-Jex4mQ-tOz1uKeQ4pOrv5QA/exec';
 function locationRequest(mode,name){
@@ -1605,10 +1610,10 @@ function startLocationSync(){
 }
 connectLocations.onclick=async()=>{
   if(locationSyncBusy)return;
-  const key=prompt('请输入团队上传密钥',locationSyncKey)?.trim();
-  if(!key)return;
+  const key=locationKeyField.value.trim();
+  if(!key){locationKeyField.focus();locationSyncStatus.textContent='请输入团队上传密钥';return}
   locationSyncKey=key;
-  if(await syncLocations())try{localStorage.setItem('dafu_sheet_upload_key',key)}catch{}
+  if(await syncLocations()){locationKeyField.value='';try{localStorage.setItem('dafu_sheet_upload_key',key)}catch{}}
 };
 $('saveLocationBtn').onclick=async()=>{
   const name=$('newLocationInput').value.trim();
@@ -1644,11 +1649,11 @@ $('locationCamera').onclick=async()=>{if(camera&&cameraMode==='location'){await 
 // QRCode implementation is embedded below; no internet needed for A4 printing.
 function qrSvg(value){const qr=new InventoryQRCode(0,0);qr.addData(value);qr.make();const n=qr.getModuleCount(),pad=4,size=n+pad*2;let paths='';for(let y=0;y<n;y++)for(let x=0;x<n;x++)if(qr.isDark(y,x))paths+=`M${x+pad} ${y+pad}h1v1h-1z`;return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" shape-rendering="crispEdges" role="img" aria-label="库位二维码"><rect width="${size}" height="${size}" fill="white"/><path fill="black" d="${paths}"/></svg>`}
 let printKind='location';function printLocations(codes){printKind='location';document.body.classList.remove('sku-label-mode');document.body.classList.add('location-label-mode');$('skuPageSizeRule').textContent='@page{size:A4 landscape;margin:0}';$('printPage').querySelector('.print-head').textContent='DAFU 仓库库位二维码';$('doPrint').textContent='🖨 A4 打印 / 保存 PDF';$('closePrint').textContent='✕ 关闭打印页 · 返回库位设置';if(!codes.length)return toast('请先设置库位');$('printSheet').innerHTML=codes.map(l=>`<div class="print-label"><small>DAFU 仓库库位</small><div class="qr">${qrSvg('LOC:'+l)}</div><strong>${esc(l)}</strong><small>扫码进入该库位盘点</small></div>`).join('');document.body.classList.add('preview-print');$('printPage').style.display='block';window.scrollTo(0,0);}
-function printSkus(codes){printKind='sku';document.body.classList.remove('location-label-mode');document.body.classList.add('sku-label-mode');$('skuPageSizeRule').textContent='';$('printPage').querySelector('.print-head').textContent='DAFU 货号 / SKU 标签 · 100 × 150 mm';$('doPrint').textContent='🖨 100×150mm 打印 / 保存 PDF';$('closePrint').textContent='✕ 关闭打印页 · 返回货号设置';try{$('printSheet').innerHTML=codes.map(code=>`<div class="print-label"><small class="sku-dafu-brand">DAFU</small><div class="qr">${qrSvg(code)}</div><strong>${esc(code)}</strong><small>扫码盘点 · 同 SKU 自动累计</small></div>`).join('')}catch(e){toast('二维码生成失败，请检查货号长度');return} $('skuPrintModal').classList.add('hidden');document.body.classList.add('preview-print');$('printPage').style.display='block';window.scrollTo(0,0)}$('generateSkuPrint').onclick=()=>{const codes=[...new Set($('skuPrintInput').value.split(/\r?\n/).map(x=>x.trim().toUpperCase()).filter(Boolean))];if(!codes.length)return toast('请至少输入一个 SKU');if(codes.some(x=>x.length>80))return toast('单个 SKU 最多 80 个字符');printSkus(codes)}; $('printAllLocations').onclick=()=>{printLocations(state.locations);$('locationModal').classList.add('hidden')};$('doPrint').onclick=()=>{if(!$('printSheet').children.length){toast('请先生成二维码标签');return;}document.body.classList.add('preview-print');$('printPage').style.display='block';try{window.focus();window.print()}catch(e){toast('浏览器未能打开打印窗口，请按 Ctrl+P 手动打印')}};$('closePrint').onclick=()=>{$('printPage').style.display='none';document.body.classList.remove('preview-print','sku-label-mode','location-label-mode');$('skuPageSizeRule').textContent='';if(printKind==='sku'){$('skuPrintModal').classList.remove('hidden')}else{$('locationModal').classList.remove('hidden');renderLocations()}window.scrollTo(0,0)};
+function printSkus(codes){printKind='sku';document.body.classList.remove('location-label-mode');document.body.classList.add('sku-label-mode');$('skuPageSizeRule').textContent='';$('printPage').querySelector('.print-head').textContent='DAFU 货号 / SKU 标签 · 100 × 150 mm';$('doPrint').textContent='🖨 100×150mm 打印 / 保存 PDF';$('closePrint').textContent='✕ 关闭打印页 · 返回货号设置';try{$('printSheet').innerHTML=codes.map(code=>`<div class="print-label"><small class="sku-dafu-brand">DAFU</small><div class="qr">${qrSvg(code)}</div><strong>${esc(code)}</strong><small>扫码盘点 · 同 SKU 自动累计</small></div>`).join('')}catch(e){toast('二维码生成失败，请检查货号长度');return} $('skuPrintModal').classList.add('hidden');document.body.classList.add('preview-print');$('printPage').style.display='block';window.scrollTo(0,0)}$('generateSkuPrint').onclick=()=>{const codes=[...new Set($('skuPrintInput').value.split(/\r?\n/).map(x=>x.trim().toUpperCase()).filter(Boolean))];if(!codes.length)return toast('请至少输入一个 SKU');if(codes.some(x=>x.length>80))return toast('单个 SKU 最多 80 个字符');printSkus(codes)}; $('printAllLocations').onclick=()=>{printLocations(state.locations);$('locationModal').classList.add('hidden')};document.addEventListener('DOMContentLoaded',()=>{$('doPrint').onclick=()=>{if(!$('printSheet').children.length){toast('请先生成二维码标签');return;}document.body.classList.add('preview-print');$('printPage').style.display='block';try{window.focus();window.print()}catch(e){toast('浏览器未能打开打印窗口，请按 Ctrl+P 手动打印')}};$('closePrint').onclick=()=>{$('printPage').style.display='none';document.body.classList.remove('preview-print','sku-label-mode','location-label-mode');$('skuPageSizeRule').textContent='';if(printKind==='sku'){$('skuPrintModal').classList.remove('hidden')}else{$('locationModal').classList.remove('hidden');renderLocations()}window.scrollTo(0,0)};});
 // 增加每个库位单独打印按钮
 const oldRenderLocations=renderLocations;renderLocations=function(){oldRenderLocations();document.querySelectorAll('[data-use-location]').forEach(b=>{b.textContent='扫码启用';b.disabled=true});document.querySelectorAll('[data-remove-location]').forEach(b=>{const p=document.createElement('button');p.type='button';p.className='secondary';p.textContent='打印码';p.onclick=()=>{printLocations([b.dataset.removeLocation]);$('locationModal').classList.add('hidden')};b.before(p)})};
 showHome();
-render();renderLocations();})();
+render();renderLocations();startLocationSync();})();
 </script><script defer="" src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script><section id="printPage"><h2 class="print-head">DAFU 仓库库位二维码</h2><div class="print-actions"><button class="primary" id="doPrint">🖨 A4 打印 / 保存 PDF</button><button class="secondary" id="closePrint">✕ 关闭打印页 · 返回库位设置</button></div><div class="print-sheet" id="printSheet"></div></section><script>
 /* 独立打印按钮保障：即使主程序部分初始化失败，也可触发打印。 */
 (function(){
