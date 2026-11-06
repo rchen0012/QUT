@@ -1680,13 +1680,16 @@ function printLocations(codes){
     previewLocationPdf(images,canvas.width,canvas.height,codes);
   }catch(error){toast('库位 PDF 生成失败：'+error.message)}
 }
-function previewLocationPdf(images,width,height,codes){
+function previewLocationPdf(images,width,height,codes,sku=false){
   const dialog=document.createElement('dialog');
   dialog.className='cloud-dialog';
   dialog.style.cssText='width:min(calc(100% - 24px),780px);max-height:88dvh;overflow:auto';
-  dialog.setAttribute('aria-label','库位 PDF 预览');
+  const title=sku?'SKU 标签 PDF 预览':'库位 PDF 预览';
+  dialog.setAttribute('aria-label',title);
   dialog.innerHTML='<div style="position:sticky;top:0;background:white;padding:4px 0 12px;z-index:1"><h2 style="margin:0 0 8px">库位 PDF 预览</h2><p class="hint"></p><div class="cloud-dialog-actions"><button type="button" value="close">返回库位管理</button><button type="button" value="ok">下载 PDF</button></div></div><div class="location-pdf-pages" style="display:grid;gap:12px"></div>';
-  dialog.querySelector('.hint').textContent='A4 横版 · '+images.length+' 页 · 每个库位一页';
+  dialog.querySelector('h2').textContent=title;
+  dialog.querySelector('.hint').textContent=(sku?'100 × 150 毫米竖版':'A4 横版')+' · '+images.length+' 页 · 每个'+(sku?' SKU ':'库位')+'一页';
+  if(sku)dialog.querySelector('[value=close]').textContent='返回 SKU 设置';
   const urls=images.map((bytes,index)=>{
     const url=URL.createObjectURL(new Blob([bytes],{type:'image/jpeg'}));
     const image=document.createElement('img');
@@ -1696,13 +1699,18 @@ function previewLocationPdf(images,width,height,codes){
     return url;
   });
   dialog.querySelector('[value=close]').onclick=()=>dialog.close();
-  dialog.querySelector('[value=ok]').onclick=()=>downloadLocationPdf(images,width,height);
+  dialog.querySelector('[value=ok]').onclick=()=>downloadLocationPdf(images,width,height,sku);
+  if(sku){
+    const open=document.createElement('button');open.type='button';open.textContent='打开 PDF 打印';
+    open.onclick=()=>downloadLocationPdf(images,width,height,true,true);
+    dialog.querySelector('[value=ok]').before(open);
+  }
   dialog.addEventListener('close',()=>{urls.forEach(url=>URL.revokeObjectURL(url));dialog.remove()},{once:true});
   document.body.append(dialog);dialog.showModal();
 }
 
-function downloadLocationPdf(images,imageWidth,imageHeight){
-  const width=(297*72/25.4).toFixed(4),height=(210*72/25.4).toFixed(4);
+function downloadLocationPdf(images,imageWidth,imageHeight,sku=false,open=false){
+  const width=((sku?100:297)*72/25.4).toFixed(4),height=((sku?150:210)*72/25.4).toFixed(4);
   const encoder=new TextEncoder(),parts=[],offsets=[0];
   let length=0;
   function add(value){const bytes=typeof value==='string'?encoder.encode(value):value;parts.push(bytes);length+=bytes.length}
@@ -1727,11 +1735,38 @@ function downloadLocationPdf(images,imageWidth,imageHeight){
   add('trailer\n<< /Size '+offsets.length+' /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF\n');
   const url=URL.createObjectURL(new Blob(parts,{type:'application/pdf'}));
   const link=document.createElement('a');
-  link.href=url;link.download='DAFU_库位二维码_A4.pdf';
+  link.href=url;
+  if(open){link.target='_blank';link.rel='noopener'}
+  else link.download=sku?'DAFU_SKU_100x150mm.pdf':'DAFU_库位二维码_A4.pdf';
   document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
 }
 
-function printSkus(codes){printKind='sku';document.body.classList.remove('location-label-mode');document.body.classList.add('sku-label-mode');$('skuPageSizeRule').textContent='@page dafuSku{size:100mm 150mm;margin:0}';$('printPage').querySelector('.print-head').textContent='DAFU 货号 / SKU 标签 · 100 × 150 mm';$('doPrint').textContent='🖨 100×150mm 打印 / 保存 PDF';$('closePrint').textContent='✕ 关闭打印页 · 返回货号设置';try{$('printSheet').innerHTML=codes.map(code=>`<div class="print-label"><small class="sku-dafu-brand">DAFU</small><div class="qr">${qrSvg(code)}</div><strong>${esc(code)}</strong><small>扫码盘点 · 同 SKU 自动累计</small></div>`).join('')}catch(e){toast('二维码生成失败，请检查货号长度');return} $('skuPrintModal').classList.add('hidden');document.body.classList.add('preview-print');$('printPage').style.display='block';window.scrollTo(0,0)}$('generateSkuPrint').onclick=()=>{const codes=[...new Set($('skuPrintInput').value.split(/\r?\n/).map(x=>x.trim().toUpperCase()).filter(Boolean))];if(!codes.length)return toast('请至少输入一个 SKU');if(codes.some(x=>x.length>80))return toast('单个 SKU 最多 80 个字符');printSkus(codes)}; $('printAllLocations').onclick=()=>{printLocations(state.locations)};document.addEventListener('DOMContentLoaded',()=>{$('doPrint').onclick=()=>{if(!$('printSheet').children.length){toast('请先生成二维码标签');return;}document.body.classList.add('preview-print');$('printPage').style.display='block';try{window.focus();window.print()}catch(e){toast('浏览器未能打开打印窗口，请按 Ctrl+P 手动打印')}};$('closePrint').onclick=()=>{$('printPage').style.display='none';document.body.classList.remove('preview-print','sku-label-mode','location-label-mode');$('skuPageSizeRule').textContent='';if(printKind==='sku'){$('skuPrintModal').classList.remove('hidden')}else{$('locationModal').classList.remove('hidden');renderLocations()}window.scrollTo(0,0)};});
+function printSkus(codes){
+  try{
+    const canvas=document.createElement('canvas');
+    canvas.width=1000;canvas.height=1500;
+    const ctx=canvas.getContext('2d');
+    const images=codes.map(code=>{
+      ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillStyle='#142f2a';ctx.font='bold 125px Arial, sans-serif';ctx.fillText('DAFU',500,250);
+      const qr=new InventoryQRCode(0,0);qr.addData(code);qr.make();
+      const count=qr.getModuleCount(),unit=Math.floor(600/(count+8));
+      const left=Math.round((1000-count*unit)/2),top=Math.round(720-count*unit/2);
+      ctx.fillStyle='#000';
+      for(let row=0;row<count;row++)for(let col=0;col<count;col++){
+        if(qr.isDark(row,col))ctx.fillRect(left+col*unit,top+row*unit,unit,unit);
+      }
+      ctx.font='bold 82px Arial, sans-serif';ctx.fillText(code,500,1130,870);
+      ctx.font='38px Arial, sans-serif';ctx.fillText('扫码盘点 · 同 SKU 自动累计',500,1250,870);
+      const jpeg=canvas.toDataURL('image/jpeg',0.96).split(',')[1];
+      return Uint8Array.from(atob(jpeg),char=>char.charCodeAt(0));
+    });
+    previewLocationPdf(images,canvas.width,canvas.height,codes,true);
+  }catch(error){toast('SKU PDF 生成失败：'+error.message)}
+}
+
+$('generateSkuPrint').onclick=()=>{const codes=[...new Set($('skuPrintInput').value.split(/\r?\n/).map(x=>x.trim().toUpperCase()).filter(Boolean))];if(!codes.length)return toast('请至少输入一个 SKU');if(codes.some(x=>x.length>80))return toast('单个 SKU 最多 80 个字符');printSkus(codes)}; $('printAllLocations').onclick=()=>{printLocations(state.locations)};document.addEventListener('DOMContentLoaded',()=>{$('doPrint').onclick=()=>{if(!$('printSheet').children.length){toast('请先生成二维码标签');return;}document.body.classList.add('preview-print');$('printPage').style.display='block';try{window.focus();window.print()}catch(e){toast('浏览器未能打开打印窗口，请按 Ctrl+P 手动打印')}};$('closePrint').onclick=()=>{$('printPage').style.display='none';document.body.classList.remove('preview-print','sku-label-mode','location-label-mode');$('skuPageSizeRule').textContent='';if(printKind==='sku'){$('skuPrintModal').classList.remove('hidden')}else{$('locationModal').classList.remove('hidden');renderLocations()}window.scrollTo(0,0)};});
 // 增加每个库位单独打印按钮
 const oldRenderLocations=renderLocations;renderLocations=function(){oldRenderLocations();document.querySelectorAll('[data-use-location]').forEach(b=>{b.textContent='扫码启用';b.disabled=true});document.querySelectorAll('[data-remove-location]').forEach(b=>{const p=document.createElement('button');p.type='button';p.className='secondary';p.textContent='预览 PDF';p.onclick=()=>{printLocations([b.dataset.removeLocation])};b.before(p)})};
 function newTaskCode(){
