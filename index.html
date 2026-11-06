@@ -1,146 +1,1581 @@
-<!doctype html>
-<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>订单箱数核验系统 · 完整版</title>
-<style>
-:root{--blue:#0862c8;--dark:#084b9e;--pale:#eaf3ff;--line:#d6e2f2;--green:#087b38;--red:#cf2636}*{box-sizing:border-box}body{margin:0;background:#edf3fb;font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;color:#18283e}button,input{font:inherit}button{cursor:pointer}.app{max-width:540px;margin:auto;min-height:100vh;background:#fff;box-shadow:0 0 25px #143a6412}.hero{background:linear-gradient(125deg,#064998,#0873db);color:white;padding:24px 17px 18px}.hero h1{margin:0;font-size:23px}.hero p{margin:7px 0 0;font-size:13px;opacity:.92}.sheet{margin:14px 12px 0;border-radius:13px;background:white;padding:13px;box-shadow:0 2px 10px #123b6420;color:#172b43}.sheetline{display:flex;justify-content:space-between;gap:8px;align-items:center}.sheetline strong{font-size:15px}.sub{font-size:12px;color:#54667b;margin-top:8px}.ok{color:var(--green);font-size:12px}.offline{color:#bd5b09;font-size:12px}.tabs{display:grid;grid-template-columns:repeat(5,1fr);margin:14px 10px 0;border-bottom:1px solid var(--line)}.tabs button{background:none;border:0;padding:12px 2px;font-size:13px;color:#36485c}.tabs button.active{color:#075ab8;font-weight:700;border-bottom:3px solid #0871e8}.panel{padding:14px 12px 24px}.scanbox{background:#f2f7ff;border:1px solid #cbdcf0;border-radius:12px;padding:14px}.scanbox h3{margin:0 0 9px;font-size:15px}.inputrow{display:flex;gap:8px}.inputrow input{min-width:0;flex:1;padding:12px;border:1px solid #aebed1;border-radius:8px;font-size:17px;letter-spacing:2px}.inputrow button{background:var(--blue);border:0;color:white;border-radius:8px;padding:0 15px;font-weight:700}.smallbuttons{display:flex;gap:8px;margin-top:10px}.smallbuttons button{flex:1;padding:10px 4px;border:1px solid #b9cbe1;background:white;border-radius:8px;color:#0d55a5}.smallbuttons button:disabled,.primary:disabled{opacity:.45;cursor:not-allowed}.card{border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:14px;background:white}.label{font-size:13px;color:#52667e}.order{font-size:25px;font-weight:800;letter-spacing:1px;margin:7px 0 15px}.notice{padding:12px;border-radius:9px;font-size:14px;line-height:1.6;margin:10px 0}.danger{background:#fff0f1;color:#ad1c30}.success{background:#e5f8ed;color:#08672d}.info{background:#eaf3ff;color:#0755a4}.numbers{display:grid;grid-template-columns:1fr 1fr;gap:10px}.num{padding:13px;border-radius:9px;background:#edf4ff;text-align:center;border:1px solid #d0dff3}.num:nth-child(2){background:#e9faee;border-color:#c8ebd4}.num strong{display:block;font-size:34px;color:#075fca;margin-top:4px}.num:nth-child(2) strong{color:#078237}.progressrow{display:flex;justify-content:space-between;margin:15px 0 8px;font-size:14px}.track{height:13px;border-radius:10px;background:#dce4ed;overflow:hidden}.fill{height:100%;background:#086ce5;transition:width .2s}.primary{width:100%;background:linear-gradient(90deg,#0754b3,#0875eb);color:white;border:0;border-radius:9px;padding:13px;font-weight:700;margin-top:12px}.secondary{width:100%;background:white;color:#075ab5;border:1px solid #b6cce9;border-radius:9px;padding:12px;margin-top:8px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:10px}.stat{text-align:center;border-right:1px solid #e0e8f3}.stat:last-child{border:0}.stat span{font-size:12px;color:#64748b}.stat strong{display:block;font-size:23px;margin-top:4px}.muted{color:#64748b;font-size:12px}.hidden{display:none!important}.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:12px 0}.keypad button{padding:12px 0;border:1px solid #b6c5d7;border-radius:8px;background:linear-gradient(#fff,#f0f4fa);font-size:20px;font-weight:650}.keypad button:active{background:#d5e8ff}.order-keypad{margin:12px 0 6px}.order-keypad button{padding:11px 0}.order-keypad button:last-child{color:#b82e3a}.modalshade{position:fixed;inset:0;background:#091e3c9c;z-index:50;display:flex;align-items:center;justify-content:center;padding:16px}.modal{background:white;width:min(100%,440px);max-height:95vh;overflow:auto;border-radius:16px;padding:18px;box-shadow:0 12px 40px #001c4150}.modal h2{margin:0 0 7px;font-size:19px}.modal input{width:100%;font-size:27px;text-align:center;border:2px solid #0869df;border-radius:9px;padding:10px}.row{display:flex;justify-content:space-between;align-items:center;gap:8px}.record{border-bottom:1px solid #e1e8f2;padding:12px 2px;font-size:13px}.record:last-child{border:0}.pill{padding:4px 8px;background:#eaf3ff;border-radius:20px;font-size:12px}.setting input{width:100%;border:1px solid #b5c8de;border-radius:7px;padding:10px;margin-top:6px}.setting label{display:block;margin:13px 0;font-size:13px}.foot{padding:10px 12px;border-top:1px solid #e1e9f4;color:#6a7e92;font-size:11px;text-align:center}.camera{width:100%;margin-top:12px;overflow:hidden;border-radius:10px}.camera video{width:100%}#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#152d4b;color:white;border-radius:8px;padding:11px 17px;z-index:80;max-width:90vw;display:none;font-size:13px}.hint{font-size:12px;color:#6b7c8e;line-height:1.6}
-.brandrow{display:flex;align-items:center;gap:12px;min-height:56px}.brandrow img{display:block;width:88px;height:56px;object-fit:contain;background:transparent;border-radius:0;padding:0}.brandfallback{width:88px;height:56px;border-radius:0;background:transparent;color:#ffffff;font-weight:900;font-size:23px;align-items:center;justify-content:center;letter-spacing:1px}.brandrow h1{font-size:21px;line-height:1.3;flex:1;cursor:pointer}@media(max-width:370px){.brandrow h1{font-size:18px}.brandrow img,.brandfallback{width:72px}}
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/><title>DAFU 库存盘点系统</title><style>
+:root{--mint:#37BEB0;--dark:#238F84;--line:#CDE9E4;--bg:#EAF6F3;--red:#c73545;--green:#087b38}*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,'Microsoft YaHei',sans-serif;color:#18283e}button,input{font:inherit}button{cursor:pointer}.app{max-width:540px;min-height:100vh;margin:auto;background:#fff;box-shadow:0 0 25px #143a6412}.hero{background:linear-gradient(125deg,#238F84,#37BEB0);color:#fff;padding:22px 16px 18px}.brand{display:flex;align-items:center;gap:12px}.brand img{width:90px;height:58px;object-fit:contain}.brand h1{font-size:22px;margin:0}.hero p{font-size:13px;opacity:.9}.sheet,.card{background:#fff;border-radius:12px;padding:14px;margin-top:13px;border:1px solid var(--line)}.sheet{color:#243b48;box-shadow:0 2px 10px #123b6420}.row{display:flex;justify-content:space-between;align-items:center;gap:8px}.muted,.hint{font-size:12px;color:#637a7b;line-height:1.6}.tabs{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--line);margin:10px 7px 0}.tabs button{border:0;background:none;padding:12px 2px;font-size:12px;color:#40545a}.tabs .active{color:#167D73;border-bottom:3px solid var(--mint);font-weight:800}.panel{padding:12px 12px 24px}.scanbox{background:#F0FAF8;border:1px solid #C5EAE3;border-radius:12px;padding:14px}.scanbox h3,.card h3{margin:0 0 12px;font-size:16px}.inputrow{display:flex;gap:7px}.inputrow input{flex:1;min-width:0;border:1px solid #a9c9c4;border-radius:8px;padding:12px;font-size:17px}.inputrow button,.primary{background:linear-gradient(90deg,#238F84,#37BEB0);color:white;border:0;border-radius:9px;padding:12px;font-weight:700}.primary{width:100%;margin-top:10px}.secondary{background:white;color:#167D73;border:1px solid #B7E1D9;border-radius:9px;padding:10px}.full{width:100%;margin-top:8px}.smallbuttons{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.smallbuttons button{flex:1;min-width:95px}.hidden{display:none!important}.label{font-size:13px;color:#52667e}.numbers,.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.num{background:#EAF9F6;border:1px solid var(--line);border-radius:9px;padding:12px;text-align:center}.num strong{display:block;font-size:30px;color:#167D73}.stats{grid-template-columns:repeat(4,1fr);gap:4px}.stat{text-align:center}.stat strong{display:block;font-size:23px;color:#167D73}.stat span{font-size:11px;color:#64748b}.notice{padding:11px;border-radius:9px;margin:10px 0;font-size:13px}.success{background:#e5f8ed;color:#08672d}.danger{background:#fff0f1;color:#ad1c30}.info{background:#eaf9f6;color:#167D73}.field{display:block;font-size:13px;margin:10px 0;color:#52667e}.field input{display:block;width:100%;padding:11px;margin-top:5px;border:1px solid #b5c8de;border-radius:8px;color:#18283e}.record{padding:12px 0;border-bottom:1px solid #e0ece9;font-size:13px}.record:last-child{border:0}.pill{background:#eaf9f6;color:#167D73;padding:4px 8px;border-radius:20px;font-size:12px}.modalshade{position:fixed;inset:0;background:#091e3c9c;display:flex;align-items:center;justify-content:center;padding:15px;z-index:50}.modal{width:min(100%,440px);max-height:94vh;overflow:auto;background:#fff;border-radius:15px;padding:18px}.modal h2{font-size:19px;margin:0 0 12px}.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:12px 0}.keypad button{border:1px solid #b6c5d7;border-radius:8px;background:#f5faf9;padding:12px;font-size:20px}.sku-keypad{grid-template-columns:repeat(10,minmax(0,1fr));gap:4px}.sku-keypad button{min-width:0;padding:10px 0;font-size:clamp(11px,3vw,17px);font-weight:650}.sku-keypad .wide-key{grid-column:span 3;font-size:14px}.sku-keypad .back-key{grid-column:span 4;background:#dff5f0;color:#167D73}@media(max-width:380px){.sku-keypad{gap:3px}.sku-keypad button{padding:9px 0;font-size:12px}}.foot{border-top:1px solid var(--line);text-align:center;font-size:11px;color:#6a7e92;padding:12px}.camera video{width:100%}#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#173b3b;color:white;padding:12px 16px;border-radius:9px;display:none;z-index:99;max-width:90vw;font-size:13px}.dangerbutton{color:#b52c37;border-color:#edc5cb}.archive details{margin:8px 0}.bar{height:10px;background:#d9eee9;border-radius:20px;overflow:hidden}.bar div{height:100%;background:var(--mint)}button:disabled{opacity:.45;cursor:not-allowed}@media(max-width:370px){.brand h1{font-size:18px}.brand img{width:70px}.tabs button{font-size:11px}}
 
-/* DAFU mint theme — primary #37BEB0 */
-:root{--blue:#37BEB0;--dark:#238F84;--pale:#EAF9F6;--line:#CDE9E4}
-body{background:#EAF6F3}
-.hero{background:linear-gradient(125deg,#238F84,#37BEB0)}
-.tabs button.active{color:#167D73;border-bottom-color:#37BEB0}
-.scanbox{background:#F0FAF8;border-color:#C5EAE3}
-.inputrow button{background:#37BEB0;color:#073E39}
-.smallbuttons button{border-color:#B7E1D9;color:#167D73}
-.card{border-color:#CDE9E4}
-.info{background:#EAF9F6;color:#167D73}
-.num{background:#EAF9F6;border-color:#CDE9E4}
-.num strong{color:#167D73}
-.track{background:#D9EEE9}
-.fill{background:#37BEB0}
-.primary{background:linear-gradient(90deg,#238F84,#37BEB0);color:#fff}
-.secondary{color:#167D73;border-color:#B7E1D9}
-.keypad button:active{background:#D5F2EC}
-.modal input{border-color:#37BEB0}
-.pill{background:#EAF9F6;color:#167D73}
-.setting input:focus,.inputrow input:focus{outline:2px solid #37BEB0;outline-offset:1px}
+.locationbar{margin-top:12px;background:#eaf9f6;border:1px solid #b7e1d9;border-radius:10px;padding:11px;margin-bottom:12px}.locationbar label{font-size:13px;font-weight:700;color:#167d73}.locationbar select,.locationbar input{width:100%;border:1px solid #a9c9c4;border-radius:8px;padding:11px;margin-top:7px;background:white;font:inherit}.locationbar .row{margin-top:7px}.locationbar button{flex:1}.location-tag{display:inline-block;padding:4px 8px;background:#eaf9f6;color:#167d73;border-radius:6px;font-weight:700}
+.location-breakdown{margin:10px 0;border:1px solid #cde9e4;border-radius:9px;overflow:hidden}.location-breakdown .loc-row{display:flex;justify-content:space-between;padding:9px 12px;border-bottom:1px solid #e1efeb;font-size:13px}.location-breakdown .loc-row:last-child{border-bottom:0}.location-breakdown .loc-row:nth-child(odd){background:#f1faf8}.location-breakdown .loc-row.total{font-weight:800;color:#167d73;background:#e4f7f2}
+#homePage{padding:18px 14px 28px}.home-title{text-align:center;font-size:21px;margin:12px 0 7px}.home-action{width:100%;text-align:left;border:1px solid #b8e5dc;background:#f2fbf9;padding:18px;border-radius:14px;margin:10px 0;font-size:17px;font-weight:800;color:#146f66}.home-action small{display:block;font-weight:400;color:#627c78;font-size:12px;margin-top:6px}.home-task{padding:12px;border:1px solid #d3eae6;border-radius:10px;margin:8px 0}.gate{padding:16px;border:2px dashed #37BEB0;border-radius:13px;background:#f0faf8;margin-bottom:12px}.gate h3{margin:0 0 9px}.gate .inputrow input{font-size:16px}.gate .notice{margin:9px 0}.locationbar select{pointer-events:none;background:#f3f7f6;color:#405a56}.print-sheet{display:grid;grid-template-columns:1fr 1fr;gap:12px}.print-label{border:1px dashed #777;min-height:205px;padding:12px;text-align:center;break-inside:avoid;display:flex;flex-direction:column;align-items:center;justify-content:center}.print-label .qr{width:130px;height:130px;display:grid;place-items:center}.print-label svg{width:100%;height:100%}.print-label strong{font-size:21px;margin-top:7px;overflow-wrap:anywhere}.print-label small{font-size:11px}.print-head{text-align:center;margin:0 0 12px}.print-actions{display:flex;gap:8px;margin-bottom:12px}.print-actions button{flex:1}.location-print-row{display:flex;gap:5px;align-items:center;flex-wrap:wrap}.location-print-row button{font-size:12px}.gate-locked{opacity:.55;pointer-events:none}@media print{body{background:white}.app,#toast,.modalshade{display:none!important}#printPage{display:block!important;position:static!important;width:100%;margin:0;padding:0}.print-actions{display:none!important}.print-sheet{grid-template-columns:repeat(2,1fr);gap:7mm}.print-label{height:58mm;min-height:58mm;border:1px dashed #777}.print-label .qr{width:34mm;height:34mm}.print-label strong{font-size:15pt}.print-head{font-size:16pt}}#printPage{display:none;padding:14px;background:white;max-width:210mm;margin:auto}
+</style><style id="stepPagesCSS">
+/* 一个步骤一个页面：导航 → 扫库位 → 扫商品 */
+body.step-location #tab-scan > :not(#locationGate):not(#backHome){display:none!important}
+body.step-location .tabs{display:none!important}
+body.step-location #locationGate{display:block!important;margin-top:8px}
+body.step-sku #locationGate{display:none!important}
+body.step-sku #backHome{display:none!important}
+body.step-sku #backLocationStep{display:block!important}
+body.step-location #backHome{display:block!important}
+body.step-home #backLocationStep{display:none!important}
+.step-caption{font-size:12px;font-weight:750;color:#167d73;letter-spacing:.4px;margin:0 0 12px}
+#backLocationStep{margin:10px 0}
+/* 打印预览独立页面，不与盘点工作台叠加 */
+body.preview-print #printPage{display:block!important;position:fixed;inset:0;z-index:200;background:#fff;max-width:none;overflow:auto;padding:18px max(14px,calc((100vw - 790px)/2))}
+body.preview-print .app{visibility:hidden}
+body.preview-print{overflow:hidden}
+@media print{body.preview-print{overflow:visible}body.preview-print #printPage{position:static!important;overflow:visible!important;padding:0!important}body.preview-print .app{display:none!important}}
+ .verified-location-card{padding:15px!important}.verified-location-code{font-size:32px;font-weight:800;color:#16877d;letter-spacing:1px;margin:8px 0 4px}.verified-location-card .pill{background:#dcf8ec;color:#137b48} </style><style id="skuLabelPrintStyles">
+/* SKU labels: 150 mm wide × 100 mm high, one label per page. Location labels remain A4. */
+body.sku-label-mode.preview-print #printPage{max-width:900px;margin:auto}
+body.sku-label-mode.preview-print .print-sheet{display:flex;flex-direction:column;align-items:center;gap:16px}
+body.sku-label-mode.preview-print .print-label{width:min(100%,600px);aspect-ratio:3/2;min-height:0;border:1px dashed #8ca9a3;padding:18px}
+body.sku-label-mode.preview-print .print-label .qr{width:min(38%,175px);height:auto;aspect-ratio:1}
+body.sku-label-mode.preview-print .print-label strong{font-size:26px}
+@media print{
+ body.sku-label-mode #printPage{width:150mm!important;max-width:150mm!important;margin:0!important;padding:0!important}
+ body.sku-label-mode .print-head,body.sku-label-mode .print-actions{display:none!important}
+ body.sku-label-mode .print-sheet{display:block!important;margin:0!important;padding:0!important}
+ body.sku-label-mode .print-label{box-sizing:border-box!important;width:150mm!important;height:100mm!important;min-height:100mm!important;max-height:100mm!important;padding:7mm!important;border:0!important;display:flex!important;align-items:center!important;justify-content:center!important;flex-direction:column!important;break-inside:avoid!important;break-after:page!important;page-break-after:always!important}
+ body.sku-label-mode .print-label:last-child{break-after:auto!important;page-break-after:auto!important}
+ body.sku-label-mode .print-label .qr{width:43mm!important;height:43mm!important}
+ body.sku-label-mode .print-label strong{font-size:22pt!important;margin-top:4mm!important;overflow-wrap:anywhere!important}
+ body.sku-label-mode .print-label small{font-size:10pt!important}
+}
+</style><style id="skuPreviewLayoutFix">
+/* Isolated SKU preview: prevent legacy A4 grid and inherited widths from squeezing labels. */
+@media screen {
+ body.sku-label-mode.preview-print #printPage{position:fixed!important;inset:0!important;display:block!important;width:100vw!important;max-width:none!important;min-width:0!important;height:100dvh!important;margin:0!important;padding:20px 16px 40px!important;overflow-x:hidden!important;overflow-y:auto!important;box-sizing:border-box!important;background:#f0f8f6!important;z-index:200!important}
+ body.sku-label-mode.preview-print #printPage .print-head{display:block!important;width:100%!important;max-width:680px!important;margin:0 auto 16px!important;font-size:21px!important;line-height:1.4!important;text-align:center!important;white-space:normal!important;word-break:normal!important;overflow-wrap:normal!important}
+ body.sku-label-mode.preview-print #printPage .print-actions{display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;width:100%!important;max-width:680px!important;margin:0 auto 20px!important;gap:10px!important}
+ body.sku-label-mode.preview-print #printPage .print-actions button{flex:1 1 230px!important;width:auto!important;min-width:0!important;max-width:none!important;white-space:normal!important;word-break:normal!important;writing-mode:horizontal-tb!important;line-height:1.4!important;padding:12px 14px!important;margin:0!important}
+ body.sku-label-mode.preview-print #printPage .print-sheet{display:flex!important;flex-direction:column!important;align-items:center!important;gap:20px!important;width:100%!important;max-width:680px!important;margin:0 auto!important;min-width:0!important}
+ body.sku-label-mode.preview-print #printPage .print-label{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:10px!important;box-sizing:border-box!important;flex:0 0 auto!important;width:min(100%,600px)!important;min-width:0!important;height:auto!important;min-height:0!important;max-height:none!important;aspect-ratio:3/2!important;padding:20px!important;margin:0!important;border:1px dashed #91b7b0!important;border-radius:8px!important;background:#fff!important;overflow:hidden!important;text-align:center!important}
+ body.sku-label-mode.preview-print #printPage .print-label .qr{display:block!important;flex:0 0 auto!important;width:clamp(90px,27%,160px)!important;height:auto!important;aspect-ratio:1!important;margin:0 auto!important}
+ body.sku-label-mode.preview-print #printPage .print-label .qr svg{display:block!important;width:100%!important;height:100%!important}
+ body.sku-label-mode.preview-print #printPage .print-label strong{display:block!important;width:100%!important;font-size:clamp(17px,4vw,29px)!important;line-height:1.25!important;overflow-wrap:anywhere!important;white-space:normal!important;margin:0!important}
+ body.sku-label-mode.preview-print #printPage .print-label small{display:block!important;font-size:clamp(10px,2.5vw,13px)!important;line-height:1.4!important;white-space:normal!important;word-break:normal!important}
+}
+@media print {
+ 
+ body.sku-label-mode.preview-print #printPage{display:block!important;position:static!important;width:150mm!important;max-width:none!important;min-width:150mm!important;margin:0!important;padding:0!important;overflow:visible!important;background:#fff!important}
+ body.sku-label-mode.preview-print #printPage .print-head,body.sku-label-mode.preview-print #printPage .print-actions{display:none!important}
+ body.sku-label-mode.preview-print #printPage .print-sheet{display:block!important;width:150mm!important;margin:0!important;padding:0!important}
+ body.sku-label-mode.preview-print #printPage .print-label{display:flex!important;box-sizing:border-box!important;width:150mm!important;min-width:150mm!important;max-width:150mm!important;height:100mm!important;min-height:100mm!important;max-height:100mm!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;gap:3mm!important;padding:6mm!important;margin:0!important;border:0!important;border-radius:0!important;background:white!important;break-inside:avoid!important;page-break-inside:avoid!important;break-after:page!important;page-break-after:always!important;text-align:center!important}
+ body.sku-label-mode.preview-print #printPage .print-label:last-child{break-after:auto!important;page-break-after:auto!important}
+ body.sku-label-mode.preview-print #printPage .print-label .qr{display:block!important;width:43mm!important;height:43mm!important;margin:0!important}
+ body.sku-label-mode.preview-print #printPage .print-label .qr svg{display:block!important;width:100%!important;height:100%!important}
+ body.sku-label-mode.preview-print #printPage .print-label strong{font-size:22pt!important;line-height:1.2!important;margin:0!important;overflow-wrap:anywhere!important}
+ body.sku-label-mode.preview-print #printPage .print-label small{font-size:10pt!important;line-height:1.3!important}
+}
+</style><style id="skuDafuBrand3x">
+/* DAFU brand enlarged 3x, SKU labels only; screen and print. */
+body.sku-label-mode.preview-print #printPage .print-label .sku-dafu-brand{display:block!important;font-size:45pt!important;font-weight:900!important;line-height:1.1!important;letter-spacing:.04em!important;white-space:nowrap!important;flex-shrink:0!important;}
+@media screen{body.sku-label-mode.preview-print #printPage .print-label .sku-dafu-brand{font-size:clamp(38px,9vw,60px)!important;}}
+@media print{body.sku-label-mode.preview-print #printPage .print-label .sku-dafu-brand{font-size:45pt!important;}}
+</style><style id="printReliabilityFix">
+/* Print isolation: hide application and overlays, retain only print sheet. */
+@media print {
+ html,body{width:auto!important;height:auto!important;min-height:0!important;overflow:visible!important;margin:0!important;padding:0!important;background:#fff!important}
+ body .app,body #toast,body .modalshade{display:none!important}
+ body #printPage{display:block!important;visibility:visible!important;position:static!important;inset:auto!important;height:auto!important;min-height:0!important;overflow:visible!important;box-shadow:none!important;transform:none!important;z-index:auto!important}
+ body #printPage .print-actions,body #printPage .print-head{display:none!important}
+ body.sku-label-mode #printPage,body.sku-label-mode.preview-print #printPage{width:150mm!important;min-width:150mm!important;max-width:150mm!important;margin:0!important;padding:0!important}
+ body.sku-label-mode #printSheet{display:block!important;width:150mm!important;overflow:visible!important;gap:0!important}
+ body.sku-label-mode #printSheet>.print-label{width:150mm!important;height:100mm!important;min-height:100mm!important;max-height:100mm!important;margin:0!important;padding:4mm 6mm!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;gap:2mm!important;border:0!important;overflow:hidden!important;break-inside:avoid!important;page-break-inside:avoid!important;break-after:page!important;page-break-after:always!important}
+ body.sku-label-mode #printSheet>.print-label:last-child{break-after:auto!important;page-break-after:auto!important}
+ body.sku-label-mode #printSheet .sku-dafu-brand{font-size:45pt!important;line-height:1!important;margin:0!important}
+ body.sku-label-mode #printSheet .qr{width:39mm!important;height:39mm!important;flex:0 0 39mm!important;margin:0!important}
+ body.sku-label-mode #printSheet .qr svg{width:100%!important;height:100%!important}
+ body.sku-label-mode #printSheet strong{font-size:19pt!important;line-height:1.1!important;margin:0!important;overflow-wrap:anywhere!important}
+ body.sku-label-mode #printSheet small:not(.sku-dafu-brand){font-size:9pt!important;line-height:1.1!important}
+}
+</style><style id="oneLocationPerA4">
+/* 库位标签：每个库位独占一张 A4 纸，不影响 SKU 150×100mm 标签 */
+@media screen {
+ body.location-label-mode.preview-print #printPage .print-sheet{display:flex!important;flex-direction:column!important;align-items:center!important;gap:18px!important}
+ body.location-label-mode.preview-print #printPage .print-label{box-sizing:border-box!important;width:min(100%,560px)!important;min-height:0!important;aspect-ratio:210/297!important;padding:30px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;gap:18px!important;background:#fff!important}
+ body.location-label-mode.preview-print #printPage .print-label .qr{width:min(70%,310px)!important;height:auto!important;aspect-ratio:1!important}
+ body.location-label-mode.preview-print #printPage .print-label strong{font-size:clamp(34px,7vw,62px)!important}
+ body.location-label-mode.preview-print #printPage .print-label small{font-size:clamp(16px,3vw,24px)!important}
+}
+@media print {
+ body.location-label-mode #printPage{width:210mm!important;min-width:210mm!important;max-width:210mm!important;margin:0!important;padding:0!important}
+ body.location-label-mode #printSheet{display:block!important;width:210mm!important;margin:0!important;padding:0!important}
+ body.location-label-mode #printSheet>.print-label{box-sizing:border-box!important;width:210mm!important;min-width:210mm!important;max-width:210mm!important;height:297mm!important;min-height:297mm!important;max-height:297mm!important;margin:0!important;padding:15mm!important;border:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:12mm!important;break-inside:avoid!important;page-break-inside:avoid!important;break-after:page!important;page-break-after:always!important;overflow:hidden!important}
+ body.location-label-mode #printSheet>.print-label:last-child{break-after:auto!important;page-break-after:auto!important}
+ body.location-label-mode #printSheet .qr{width:110mm!important;height:110mm!important;flex:0 0 110mm!important}
+ body.location-label-mode #printSheet strong{font-size:48pt!important;line-height:1.2!important;overflow-wrap:anywhere!important}
+ body.location-label-mode #printSheet small{font-size:20pt!important}
+}
+</style><style id="skuPortrait100x150">
+/* SKU only: portrait 100 × 150 mm; location QR stays A4 portrait. */
+@media screen {
+ body.sku-label-mode.preview-print #printPage .print-label{width:min(100%,400px)!important;aspect-ratio:2/3!important;min-height:0!important;max-height:none!important;gap:18px!important;padding:24px!important}
+ body.sku-label-mode.preview-print #printPage .print-label .qr{width:clamp(130px,45%,190px)!important;height:auto!important;aspect-ratio:1!important}
+}
+@media print {
+ 
+ body.sku-label-mode #printPage,body.sku-label-mode.preview-print #printPage{width:100mm!important;min-width:100mm!important;max-width:100mm!important}
+ body.sku-label-mode #printSheet,body.sku-label-mode.preview-print #printPage .print-sheet{display:block!important;width:100mm!important;min-width:100mm!important;max-width:100mm!important}
+ body.sku-label-mode #printSheet>.print-label,body.sku-label-mode.preview-print #printPage .print-label{width:100mm!important;min-width:100mm!important;max-width:100mm!important;height:150mm!important;min-height:150mm!important;max-height:150mm!important;aspect-ratio:auto!important;box-sizing:border-box!important;padding:10mm 6mm!important;gap:7mm!important;break-inside:avoid!important;break-after:page!important;page-break-after:always!important}
+ body.sku-label-mode #printSheet>.print-label:last-child{break-after:auto!important;page-break-after:auto!important}
+ body.sku-label-mode #printSheet .qr,body.sku-label-mode.preview-print #printPage .print-label .qr{width:52mm!important;height:52mm!important;flex:0 0 52mm!important}
+ body.sku-label-mode #printSheet .sku-dafu-brand{font-size:45pt!important}
+ body.sku-label-mode #printSheet strong{font-size:22pt!important}
+}
+</style><style id="locationLandscapeA4Final">
+/* 库位码：A4 横版，每个库位一页；SKU 100×150mm 竖版规则保持不变。 */
+@media screen {
+ body.location-label-mode.preview-print #printPage .print-sheet{display:flex!important;flex-direction:column!important;align-items:center!important;gap:20px!important}
+ body.location-label-mode.preview-print #printPage .print-label{width:min(100%,790px)!important;aspect-ratio:297/210!important;min-height:0!important;height:auto!important;padding:25px!important;gap:14px!important}
+ body.location-label-mode.preview-print #printPage .print-label .qr{width:min(40%,275px)!important;height:auto!important;aspect-ratio:1!important}
+ body.location-label-mode.preview-print #printPage .print-label small:first-child{font-size:clamp(26px,5vw,48px)!important;font-weight:900!important;line-height:1.2!important;color:#18283e!important}
+ body.location-label-mode.preview-print #printPage .print-label strong{font-size:clamp(38px,7vw,72px)!important}
+}
+@media print {
+ body.location-label-mode #printPage{width:297mm!important;min-width:297mm!important;max-width:297mm!important;padding:0!important;margin:0!important}
+ body.location-label-mode #printSheet{display:block!important;width:297mm!important;min-width:297mm!important;max-width:297mm!important;padding:0!important;margin:0!important}
+ body.location-label-mode #printSheet>.print-label{box-sizing:border-box!important;width:297mm!important;min-width:297mm!important;max-width:297mm!important;height:210mm!important;min-height:210mm!important;max-height:210mm!important;padding:8mm 12mm!important;margin:0!important;border:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:5mm!important;overflow:hidden!important;break-inside:avoid!important;page-break-inside:avoid!important;break-after:page!important;page-break-after:always!important}
+ body.location-label-mode #printSheet>.print-label:last-child{break-after:auto!important;page-break-after:auto!important}
+ body.location-label-mode #printSheet .qr{width:95mm!important;height:95mm!important;flex:0 0 95mm!important}
+ body.location-label-mode #printSheet .print-label small:first-child{font-size:40pt!important;font-weight:900!important;line-height:1.2!important;color:#18283e!important}
+ body.location-label-mode #printSheet strong{font-size:52pt!important;line-height:1.1!important}
+ body.location-label-mode #printSheet .print-label small:last-child{font-size:16pt!important}
+}
+</style><style id="skuPageSizeRule">@page{size:A4 landscape;margin:0}</style><style id="finalPrintLayoutFix">
+@media print {
+ body.location-label-mode #printPage,body.location-label-mode.preview-print #printPage{width:297mm!important;min-width:297mm!important;max-width:297mm!important;height:auto!important;max-height:none!important;position:static!important;inset:auto!important;overflow:visible!important;margin:0!important;padding:0!important;}
+ body.location-label-mode #printSheet,body.location-label-mode.preview-print #printSheet{display:block!important;width:297mm!important;min-width:297mm!important;max-width:297mm!important;margin:0!important;padding:0!important;}
+ body.location-label-mode #printSheet>.print-label,body.location-label-mode.preview-print #printSheet>.print-label{box-sizing:border-box!important;width:297mm!important;min-width:297mm!important;max-width:297mm!important;height:210mm!important;min-height:210mm!important;max-height:210mm!important;aspect-ratio:auto!important;margin:0!important;padding:9mm 15mm!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:5mm!important;border:0!important;overflow:hidden!important;break-inside:avoid!important;break-after:page!important;page-break-after:always!important;}
+ body.location-label-mode #printSheet>.print-label:last-child{break-after:auto!important;page-break-after:auto!important;}
+ body.location-label-mode #printSheet .qr{width:92mm!important;height:92mm!important;min-width:92mm!important;flex:0 0 92mm!important;overflow:visible!important;}
+ body.location-label-mode #printSheet .qr svg{display:block!important;width:100%!important;height:100%!important;max-width:100%!important;}
+ body.location-label-mode #printSheet .print-label small:first-child{display:block!important;font-size:40pt!important;line-height:1.2!important;font-weight:900!important;white-space:nowrap!important;}
+ body.location-label-mode #printSheet .print-label strong{display:block!important;font-size:52pt!important;line-height:1.1!important;}
+ body.location-label-mode #printSheet .print-label small:last-child{font-size:16pt!important;}
+}
+</style></head><body><datalist id="locationOptions"></datalist><div class="app"><header class="hero"><div class="brand"><img alt="DAFU" onerror="this.style.display='none'" src="images/form-logonova1.png"/><h1>库存盘点系统</h1></div><p>仓库扫码 · 库位管理 · 库存差异核对</p><div class="sheet" id="openSettings" role="button" tabindex="0"><div class="row"><strong>📦 DAFU · 库存盘点</strong><span class="pill">本地模式</span></div><div class="muted" id="taskDisplay"></div></div></header><section id="homePage"><h2 class="home-title">DAFU 库存盘点 · 工作台</h2><p class="hint" style="text-align:center">请选择操作：先设置库位，再创建或加入盘点任务</p><button class="home-action" id="homeCreate">＋ 创建盘点任务<small>自动生成日期批次，填写操作人员</small></button><button class="home-action" id="homeJoin">⇄ 加入 / 继续任务<small>选择本机已有任务，继续盘点</small></button><button class="home-action" id="homeLocations">▦ 库位设置与打印库位码<small>添加库位，生成二维码并按 A4 纸打印</small></button><button class="home-action" id="homeSkuPrint">▦ 货号 / SKU 二维码打印<small>输入货号或选取已盘点 SKU，生成 100×150mm 二维码标签</small></button><button class="secondary full dangerbutton" id="openClearLocal" type="button">🗑 清除本地缓存 / 盘点数据</button><div class="card"><strong>本机任务</strong><div id="homeTasks"></div></div><p class="hint">本地版：加入任务仅支持本机保存的任务；不同设备共同盘点需接入共享服务器。</p></section><nav class="tabs hidden"><button class="active" data-tab="scan">扫码盘点</button><button data-tab="stats">库存统计</button><button data-tab="logs">操作记录</button><button data-tab="tasks">历史任务</button></nav><main class="hidden"><section class="panel" id="tab-scan"><div class="gate" id="locationGate"><div class="step-caption">步骤 2 / 3 · 验证库位</div><h3>① 先扫描库位码，解锁盘点</h3><div class="inputrow"><input autocapitalize="characters" autocomplete="off" id="locationBarcode" placeholder="扫描库位二维码，例如 LOC:A1" type="text"/><button id="confirmLocation">确认库位</button></div><div class="smallbuttons"><button class="secondary" id="locationCamera">📷 摄像头扫库位</button><button class="secondary" id="changeLocation">↻ 更换库位</button></div><div class="notice info" id="locationGateStatus">尚未扫码库位，禁止商品盘点</div></div><button class="secondary full" id="backHome">⌂ 返回导航页</button><button class="secondary full" id="backLocationStep" type="button">↻ 返回扫描库位页 / 更换库位</button><div class="scanbox"><div class="step-caption">步骤 3 / 3 · 商品盘点</div><h3>▣ 扫描商品条码 / SKU</h3><div class="inputrow"><input autocapitalize="characters" autocomplete="off" id="barcode" inputmode="text" placeholder="例如 ABC-123-A01" spellcheck="false" type="text"/><button id="scanBtn">确认扫码</button></div><div aria-label="SKU 字母数字虚拟键盘" class="keypad sku-keypad hidden" id="keypad"></div><div class="smallbuttons"><button class="secondary" id="keyBtn">⌨ 字母数字键盘</button><button class="secondary" id="cameraBtn">📷 摄像头</button><button class="secondary" id="soundBtn">🔊 声音开启</button></div><div class="camera hidden" id="camera"></div><p class="hint">无需建档，首次扫码自动记录 1 件；相同 SKU 自动合并累计。支持不同库位扫码及手动调整数量。</p></div><div class="locationbar verified-location-card"><div class="row"><strong>📍 当前盘点库位</strong><span class="pill">✓ 已扫码验证</span></div><div class="verified-location-code" id="verifiedLocationDisplay">—</div><div class="muted" id="locationSummary">当前库位已验证</div><select id="activeLocation" class="hidden" aria-hidden="true" tabindex="-1"></select><button id="addLocationBtn" class="hidden" type="button" tabindex="-1">添加库位</button><button id="manageLocationsBtn" class="hidden" type="button" tabindex="-1">管理库位</button></div><div id="currentArea"><div class="card"><p class="muted">请扫描商品条码开始盘点。</p></div></div><div class="card"><div class="row"><strong>盘点任务</strong><span class="pill" id="taskStatus">进行中</span></div><button class="secondary full" id="manageBtn">＋ 创建 / 切换任务</button><button class="primary" id="endBtn" style="background:#b52c37">■ 结束当前盘点</button></div><div class="card"><div class="row"><strong>盘点概览</strong><span class="pill" id="taskName"></span></div><div class="stats" id="compactStats"></div></div></section><section class="panel hidden" id="tab-stats"><div class="card"><h3>库存统计</h3><div class="stats" id="fullStats"></div><button class="secondary full" id="exportBtn">导出库存盘点 CSV</button><button class="secondary full" id="exportLogsBtn">导出扫码流水 CSV</button><button class="primary" id="exportPdfBtn" type="button">📄 导出盘点报表 PDF</button><div id="productList"></div></div></section><section class="panel hidden" id="tab-logs"><div class="card"><h3>操作记录</h3><div id="logList"></div></div></section><div id="diffList" class="hidden" aria-hidden="true"></div><section class="panel hidden" id="tab-tasks"><div class="card"><h3>历史 / 暂停任务</h3><div class="archive" id="archiveList"></div></div></section></main><footer class="foot">数据仅保存在当前浏览器 · 支持 CSV 导出 · 尚未连接云端</footer></div>
+<div class="modalshade hidden" id="productModal"><div class="modal"><h2 id="productModalTitle">商品信息</h2><div class="muted" id="productCode"></div><label class="field">库位 / 货架<select id="productLocation" style="display:block;width:100%;padding:11px;margin-top:5px;border:1px solid #b5c8de;border-radius:8px;background:white"></select></label><label class="field">该库位盘点箱数<input id="productActual" inputmode="numeric" min="0" placeholder="必填" step="1" type="number"/></label><p class="hint">扫码无需打开此窗口。只修改选中库位的箱数，其他库位不变；SKU 合计自动重新计算，修改写入操作记录。</p><button class="primary" id="saveProduct">保存盘点信息</button><button class="secondary full" id="cancelProduct">取消</button></div></div>
+<div class="modalshade hidden" id="skuPrintModal"><div class="modal"><h2>▦ 货号 / SKU 二维码打印</h2><p class="hint">每行输入一个 SKU，支持字母、数字、横杠；也可导入当前任务已盘点货号。二维码内容仅为 SKU，不包含库位。</p><label class="field">SKU 列表（每行一个）<textarea id="skuPrintInput" rows="7" autocapitalize="characters" spellcheck="false" placeholder="DF-AC0101&#10;ABC-123-A01" style="display:block;width:100%;padding:12px;border:1px solid #b7e1d9;border-radius:9px;font:inherit;margin-top:7px;resize:vertical"></textarea></label><button class="secondary full" id="loadCountedSkus" type="button">＋ 导入当前任务所有已盘点 SKU</button><button class="primary" id="generateSkuPrint" type="button">生成 100×150mm 货号标签</button><button class="secondary full" id="closeSkuPrint" type="button">返回导航首页</button></div></div><div class="modalshade hidden" id="locationModal"><div class="modal"><h2>📍 库位管理</h2><p class="hint">先添加库位，再打印库位二维码。进入任务后必须扫码库位码才能盘点。</p><label class="field">新增库位编号<input id="newLocationInput" maxlength="50" placeholder="例如 A-01-03"/></label><button class="primary" id="saveLocationBtn">＋ 保存库位</button><button class="secondary full" id="printAllLocations">🖨 A4 横版打印全部库位码（每页一个）</button><div id="locationList"></div><button class="secondary full" id="closeLocationBtn">关闭</button></div></div><div class="modalshade hidden" id="settingsModal"><div class="modal"><h2>操作人员设置</h2><label class="field">操作人员（必填）<input id="memberInput" placeholder="请输入操作人员姓名"/></label><button class="primary" id="saveSettings">保存</button><button class="secondary full" id="closeSettings">关闭</button></div></div>
+<div class="modalshade hidden" id="taskModal"><div class="modal"><h2>创建 / 切换盘点任务</h2><label class="field">盘点日期<input id="taskDate" type="date"/></label><label class="field">批次<input id="taskBatch" max="999" min="1" type="number"/></label><label class="field">任务编号<input id="taskCode" readonly=""/></label><label class="field">操作人员（必填）<input id="taskMember"/></label><button class="primary" id="createTask">＋ 创建并进入任务</button><h3>已有任务</h3><div id="availableTasks"></div><button class="secondary full" id="closeTaskModal">关闭</button></div></div><div id="toast"></div>
+<script>(function(){const modules={"QR8bitByte":function(module,exports,require){var QRMode = require('./QRMode');
 
-/* DAFU mini-app launch animation */
-#launchSplash{position:fixed;inset:0;z-index:9999;background:linear-gradient(155deg,#e8faf7 0%,#37BEB0 55%,#178e84 100%);display:flex;align-items:center;justify-content:center;padding:24px;transition:opacity .5s ease,visibility .5s ease}
-#launchSplash.splash-out{opacity:0;visibility:hidden;pointer-events:none}
-/* Independent CSS fallback: never block the app if a script fails. */
-#launchSplash{animation:launchAutoDismiss .35s ease 2.4s forwards}
-@keyframes launchAutoDismiss{to{opacity:0;visibility:hidden;pointer-events:none}}
-.splash-content{text-align:center;width:min(100%,360px);animation:splash-rise .75s cubic-bezier(.2,.8,.2,1) both}
-.splash-logo{display:block;max-width:min(65vw,220px);max-height:130px;width:auto;height:auto;object-fit:contain;margin:0 auto 25px;filter:drop-shadow(0 8px 15px #064e4540);animation:splash-breathe 1.6s ease-in-out infinite}
-.splash-logo-text{font-size:52px;font-weight:900;letter-spacing:6px;color:white;margin-bottom:24px;text-shadow:0 6px 15px #065f5640}
-.splash-title{color:#fff;font-weight:800;font-size:23px;letter-spacing:2px;margin:0 0 10px}
-.splash-subtitle{color:#f2fffc;font-size:13px;letter-spacing:2px;margin:0}
-.splash-loading{display:flex;gap:7px;justify-content:center;margin-top:34px}
-.splash-loading i{width:9px;height:9px;background:white;border-radius:50%;animation:splash-dot 1s infinite ease-in-out}
-.splash-loading i:nth-child(2){animation-delay:.15s}.splash-loading i:nth-child(3){animation-delay:.3s}
-.splash-skip{position:absolute;top:max(20px,env(safe-area-inset-top));right:18px;border:1px solid #ffffff88;color:white;background:#ffffff22;border-radius:20px;padding:7px 15px;font-size:12px}
-@keyframes splash-rise{from{transform:translateY(22px) scale(.94);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
-@keyframes splash-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
-@keyframes splash-dot{0%,70%,100%{opacity:.35;transform:scale(.7)}35%{opacity:1;transform:scale(1.15)}}
-@media(prefers-reduced-motion:reduce){.splash-content,.splash-logo,.splash-loading i{animation:none}#launchSplash{transition:none}}
+function QR8bitByte(data) {
+	this.mode = QRMode.MODE_8BIT_BYTE;
+	this.data = data;
+}
 
-.box-detail{margin-top:9px;border:1px solid #cce9e5;border-radius:10px;background:#f5fcfa;padding:10px}.box-detail summary{cursor:pointer;font-weight:700;color:#167b70;list-style:none}.box-detail summary::-webkit-details-marker{display:none}.box-detail summary:before{content:'▸ ';}.box-detail[open] summary:before{content:'▾ ';}.box-line{display:grid;grid-template-columns:64px 1fr;gap:8px;padding:9px 3px;border-bottom:1px solid #d8eae7;font-size:13px}.box-line:last-child{border-bottom:0}.box-time{font-variant-numeric:tabular-nums;color:#415b60}.box-extra{font-size:11px;color:#718483;margin-top:3px}.box-warning{color:#b72936;font-weight:700}.box-summary{margin-top:5px;font-size:12px;color:#647b78}
-</style><style>
-#overLimitShade .modal{border-top:6px solid #dc3545;text-align:center}
-#overLimitShade .error-symbol{font-size:52px;line-height:1.3}
-#overLimitShade .error-details{background:#fff1f2;border-radius:10px;padding:13px;margin:14px 0;color:#9f2030;line-height:1.8}
-#overLimitShade .primary{background:#dc3545}
-</style>
-</head><body><div id="launchSplash" role="status" aria-label="小程序启动中">
-<button id="skipSplash" class="splash-skip" type="button">跳过动画</button>
-<div class="splash-content">
-<img class="splash-logo" src="images/form-logoshop1.png" alt="DAFU Logo" onerror="this.style.display='none';document.getElementById('splashLogoFallback').hidden=false">
-<div id="splashLogoFallback" class="splash-logo-text" hidden>DAFU</div>
-<h2 class="splash-title">订单箱数核验系统</h2>
-<p class="splash-subtitle">仓库扫码 · 箱数核验 · 多人协作</p>
-<div class="splash-loading" aria-hidden="true"><i></i><i></i><i></i></div>
-</div></div>
-<script>
+QR8bitByte.prototype = {
+
+	getLength : function() {
+		return this.data.length;
+	},
+	
+	write : function(buffer) {
+		for (var i = 0; i < this.data.length; i++) {
+			// not JIS ...
+			buffer.put(this.data.charCodeAt(i), 8);
+		}
+	}
+};
+
+module.exports = QR8bitByte;
+},"QRBitBuffer":function(module,exports,require){function QRBitBuffer() {
+	this.buffer = [];
+	this.length = 0;
+}
+
+QRBitBuffer.prototype = {
+
+	get : function(index) {
+		var bufIndex = Math.floor(index / 8);
+		return ( (this.buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+	},
+	
+	put : function(num, length) {
+		for (var i = 0; i < length; i++) {
+			this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+		}
+	},
+	
+	getLengthInBits : function() {
+		return this.length;
+	},
+	
+	putBit : function(bit) {
+	
+		var bufIndex = Math.floor(this.length / 8);
+		if (this.buffer.length <= bufIndex) {
+			this.buffer.push(0);
+		}
+	
+		if (bit) {
+			this.buffer[bufIndex] |= (0x80 >>> (this.length % 8) );
+		}
+	
+		this.length++;
+	}
+};
+
+module.exports = QRBitBuffer;
+},"QRErrorCorrectLevel":function(module,exports,require){module.exports = {
+	L : 1,
+	M : 0,
+	Q : 3,
+	H : 2
+};
+
+},"QRMaskPattern":function(module,exports,require){module.exports = {
+	PATTERN000 : 0,
+	PATTERN001 : 1,
+	PATTERN010 : 2,
+	PATTERN011 : 3,
+	PATTERN100 : 4,
+	PATTERN101 : 5,
+	PATTERN110 : 6,
+	PATTERN111 : 7
+};
+},"QRMath":function(module,exports,require){var QRMath = {
+
+	glog : function(n) {
+	
+		if (n < 1) {
+			throw new Error("glog(" + n + ")");
+		}
+		
+		return QRMath.LOG_TABLE[n];
+	},
+	
+	gexp : function(n) {
+	
+		while (n < 0) {
+			n += 255;
+		}
+	
+		while (n >= 256) {
+			n -= 255;
+		}
+	
+		return QRMath.EXP_TABLE[n];
+	},
+	
+	EXP_TABLE : new Array(256),
+	
+	LOG_TABLE : new Array(256)
+
+};
+	
+for (var i = 0; i < 8; i++) {
+	QRMath.EXP_TABLE[i] = 1 << i;
+}
+for (var i = 8; i < 256; i++) {
+	QRMath.EXP_TABLE[i] = QRMath.EXP_TABLE[i - 4]
+		^ QRMath.EXP_TABLE[i - 5]
+		^ QRMath.EXP_TABLE[i - 6]
+		^ QRMath.EXP_TABLE[i - 8];
+}
+for (var i = 0; i < 255; i++) {
+	QRMath.LOG_TABLE[QRMath.EXP_TABLE[i] ] = i;
+}
+
+module.exports = QRMath;
+},"QRMode":function(module,exports,require){module.exports = {
+    MODE_NUMBER :       1 << 0,
+    MODE_ALPHA_NUM :    1 << 1,
+    MODE_8BIT_BYTE :    1 << 2,
+    MODE_KANJI :        1 << 3
+};
+},"QRPolynomial":function(module,exports,require){var QRMath = require('./QRMath');
+
+function QRPolynomial(num, shift) {
+	if (num.length === undefined) {
+		throw new Error(num.length + "/" + shift);
+	}
+
+	var offset = 0;
+
+	while (offset < num.length && num[offset] === 0) {
+		offset++;
+	}
+
+	this.num = new Array(num.length - offset + shift);
+	for (var i = 0; i < num.length - offset; i++) {
+		this.num[i] = num[i + offset];
+	}
+}
+
+QRPolynomial.prototype = {
+
+	get : function(index) {
+		return this.num[index];
+	},
+	
+	getLength : function() {
+		return this.num.length;
+	},
+	
+	multiply : function(e) {
+	
+		var num = new Array(this.getLength() + e.getLength() - 1);
+	
+		for (var i = 0; i < this.getLength(); i++) {
+			for (var j = 0; j < e.getLength(); j++) {
+				num[i + j] ^= QRMath.gexp(QRMath.glog(this.get(i) ) + QRMath.glog(e.get(j) ) );
+			}
+		}
+	
+		return new QRPolynomial(num, 0);
+	},
+	
+	mod : function(e) {
+	
+		if (this.getLength() - e.getLength() < 0) {
+			return this;
+		}
+	
+		var ratio = QRMath.glog(this.get(0) ) - QRMath.glog(e.get(0) );
+	
+		var num = new Array(this.getLength() );
+		
+		for (var i = 0; i < this.getLength(); i++) {
+			num[i] = this.get(i);
+		}
+		
+		for (var x = 0; x < e.getLength(); x++) {
+			num[x] ^= QRMath.gexp(QRMath.glog(e.get(x) ) + ratio);
+		}
+	
+		// recursive call
+		return new QRPolynomial(num, 0).mod(e);
+	}
+};
+
+module.exports = QRPolynomial;
+},"QRRSBlock":function(module,exports,require){var QRErrorCorrectLevel = require('./QRErrorCorrectLevel');
+
+function QRRSBlock(totalCount, dataCount) {
+	this.totalCount = totalCount;
+	this.dataCount  = dataCount;
+}
+
+QRRSBlock.RS_BLOCK_TABLE = [
+
+	// L
+	// M
+	// Q
+	// H
+
+	// 1
+	[1, 26, 19],
+	[1, 26, 16],
+	[1, 26, 13],
+	[1, 26, 9],
+	
+	// 2
+	[1, 44, 34],
+	[1, 44, 28],
+	[1, 44, 22],
+	[1, 44, 16],
+
+	// 3
+	[1, 70, 55],
+	[1, 70, 44],
+	[2, 35, 17],
+	[2, 35, 13],
+
+	// 4		
+	[1, 100, 80],
+	[2, 50, 32],
+	[2, 50, 24],
+	[4, 25, 9],
+	
+	// 5
+	[1, 134, 108],
+	[2, 67, 43],
+	[2, 33, 15, 2, 34, 16],
+	[2, 33, 11, 2, 34, 12],
+	
+	// 6
+	[2, 86, 68],
+	[4, 43, 27],
+	[4, 43, 19],
+	[4, 43, 15],
+	
+	// 7		
+	[2, 98, 78],
+	[4, 49, 31],
+	[2, 32, 14, 4, 33, 15],
+	[4, 39, 13, 1, 40, 14],
+	
+	// 8
+	[2, 121, 97],
+	[2, 60, 38, 2, 61, 39],
+	[4, 40, 18, 2, 41, 19],
+	[4, 40, 14, 2, 41, 15],
+	
+	// 9
+	[2, 146, 116],
+	[3, 58, 36, 2, 59, 37],
+	[4, 36, 16, 4, 37, 17],
+	[4, 36, 12, 4, 37, 13],
+	
+	// 10		
+	[2, 86, 68, 2, 87, 69],
+	[4, 69, 43, 1, 70, 44],
+	[6, 43, 19, 2, 44, 20],
+	[6, 43, 15, 2, 44, 16],
+
+	// 11
+	[4, 101, 81],
+	[1, 80, 50, 4, 81, 51],
+	[4, 50, 22, 4, 51, 23],
+	[3, 36, 12, 8, 37, 13],
+
+	// 12
+	[2, 116, 92, 2, 117, 93],
+	[6, 58, 36, 2, 59, 37],
+	[4, 46, 20, 6, 47, 21],
+	[7, 42, 14, 4, 43, 15],
+
+	// 13
+	[4, 133, 107],
+	[8, 59, 37, 1, 60, 38],
+	[8, 44, 20, 4, 45, 21],
+	[12, 33, 11, 4, 34, 12],
+
+	// 14
+	[3, 145, 115, 1, 146, 116],
+	[4, 64, 40, 5, 65, 41],
+	[11, 36, 16, 5, 37, 17],
+	[11, 36, 12, 5, 37, 13],
+
+	// 15
+	[5, 109, 87, 1, 110, 88],
+	[5, 65, 41, 5, 66, 42],
+	[5, 54, 24, 7, 55, 25],
+	[11, 36, 12],
+
+	// 16
+	[5, 122, 98, 1, 123, 99],
+	[7, 73, 45, 3, 74, 46],
+	[15, 43, 19, 2, 44, 20],
+	[3, 45, 15, 13, 46, 16],
+
+	// 17
+	[1, 135, 107, 5, 136, 108],
+	[10, 74, 46, 1, 75, 47],
+	[1, 50, 22, 15, 51, 23],
+	[2, 42, 14, 17, 43, 15],
+
+	// 18
+	[5, 150, 120, 1, 151, 121],
+	[9, 69, 43, 4, 70, 44],
+	[17, 50, 22, 1, 51, 23],
+	[2, 42, 14, 19, 43, 15],
+
+	// 19
+	[3, 141, 113, 4, 142, 114],
+	[3, 70, 44, 11, 71, 45],
+	[17, 47, 21, 4, 48, 22],
+	[9, 39, 13, 16, 40, 14],
+
+	// 20
+	[3, 135, 107, 5, 136, 108],
+	[3, 67, 41, 13, 68, 42],
+	[15, 54, 24, 5, 55, 25],
+	[15, 43, 15, 10, 44, 16],
+
+	// 21
+	[4, 144, 116, 4, 145, 117],
+	[17, 68, 42],
+	[17, 50, 22, 6, 51, 23],
+	[19, 46, 16, 6, 47, 17],
+
+	// 22
+	[2, 139, 111, 7, 140, 112],
+	[17, 74, 46],
+	[7, 54, 24, 16, 55, 25],
+	[34, 37, 13],
+
+	// 23
+	[4, 151, 121, 5, 152, 122],
+	[4, 75, 47, 14, 76, 48],
+	[11, 54, 24, 14, 55, 25],
+	[16, 45, 15, 14, 46, 16],
+
+	// 24
+	[6, 147, 117, 4, 148, 118],
+	[6, 73, 45, 14, 74, 46],
+	[11, 54, 24, 16, 55, 25],
+	[30, 46, 16, 2, 47, 17],
+
+	// 25
+	[8, 132, 106, 4, 133, 107],
+	[8, 75, 47, 13, 76, 48],
+	[7, 54, 24, 22, 55, 25],
+	[22, 45, 15, 13, 46, 16],
+
+	// 26
+	[10, 142, 114, 2, 143, 115],
+	[19, 74, 46, 4, 75, 47],
+	[28, 50, 22, 6, 51, 23],
+	[33, 46, 16, 4, 47, 17],
+
+	// 27
+	[8, 152, 122, 4, 153, 123],
+	[22, 73, 45, 3, 74, 46],
+	[8, 53, 23, 26, 54, 24],
+	[12, 45, 15, 28, 46, 16],
+
+	// 28
+	[3, 147, 117, 10, 148, 118],
+	[3, 73, 45, 23, 74, 46],
+	[4, 54, 24, 31, 55, 25],
+	[11, 45, 15, 31, 46, 16],
+
+	// 29
+	[7, 146, 116, 7, 147, 117],
+	[21, 73, 45, 7, 74, 46],
+	[1, 53, 23, 37, 54, 24],
+	[19, 45, 15, 26, 46, 16],
+
+	// 30
+	[5, 145, 115, 10, 146, 116],
+	[19, 75, 47, 10, 76, 48],
+	[15, 54, 24, 25, 55, 25],
+	[23, 45, 15, 25, 46, 16],
+
+	// 31
+	[13, 145, 115, 3, 146, 116],
+	[2, 74, 46, 29, 75, 47],
+	[42, 54, 24, 1, 55, 25],
+	[23, 45, 15, 28, 46, 16],
+
+	// 32
+	[17, 145, 115],
+	[10, 74, 46, 23, 75, 47],
+	[10, 54, 24, 35, 55, 25],
+	[19, 45, 15, 35, 46, 16],
+
+	// 33
+	[17, 145, 115, 1, 146, 116],
+	[14, 74, 46, 21, 75, 47],
+	[29, 54, 24, 19, 55, 25],
+	[11, 45, 15, 46, 46, 16],
+
+	// 34
+	[13, 145, 115, 6, 146, 116],
+	[14, 74, 46, 23, 75, 47],
+	[44, 54, 24, 7, 55, 25],
+	[59, 46, 16, 1, 47, 17],
+
+	// 35
+	[12, 151, 121, 7, 152, 122],
+	[12, 75, 47, 26, 76, 48],
+	[39, 54, 24, 14, 55, 25],
+	[22, 45, 15, 41, 46, 16],
+
+	// 36
+	[6, 151, 121, 14, 152, 122],
+	[6, 75, 47, 34, 76, 48],
+	[46, 54, 24, 10, 55, 25],
+	[2, 45, 15, 64, 46, 16],
+
+	// 37
+	[17, 152, 122, 4, 153, 123],
+	[29, 74, 46, 14, 75, 47],
+	[49, 54, 24, 10, 55, 25],
+	[24, 45, 15, 46, 46, 16],
+
+	// 38
+	[4, 152, 122, 18, 153, 123],
+	[13, 74, 46, 32, 75, 47],
+	[48, 54, 24, 14, 55, 25],
+	[42, 45, 15, 32, 46, 16],
+
+	// 39
+	[20, 147, 117, 4, 148, 118],
+	[40, 75, 47, 7, 76, 48],
+	[43, 54, 24, 22, 55, 25],
+	[10, 45, 15, 67, 46, 16],
+
+	// 40
+	[19, 148, 118, 6, 149, 119],
+	[18, 75, 47, 31, 76, 48],
+	[34, 54, 24, 34, 55, 25],
+	[20, 45, 15, 61, 46, 16]
+];
+
+QRRSBlock.getRSBlocks = function(typeNumber, errorCorrectLevel) {
+	
+	var rsBlock = QRRSBlock.getRsBlockTable(typeNumber, errorCorrectLevel);
+	
+	if (rsBlock === undefined) {
+		throw new Error("bad rs block @ typeNumber:" + typeNumber + "/errorCorrectLevel:" + errorCorrectLevel);
+	}
+
+	var length = rsBlock.length / 3;
+	
+	var list = [];
+	
+	for (var i = 0; i < length; i++) {
+
+		var count = rsBlock[i * 3 + 0];
+		var totalCount = rsBlock[i * 3 + 1];
+		var dataCount  = rsBlock[i * 3 + 2];
+
+		for (var j = 0; j < count; j++) {
+			list.push(new QRRSBlock(totalCount, dataCount) );	
+		}
+	}
+	
+	return list;
+};
+
+QRRSBlock.getRsBlockTable = function(typeNumber, errorCorrectLevel) {
+
+	switch(errorCorrectLevel) {
+	case QRErrorCorrectLevel.L :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+	case QRErrorCorrectLevel.M :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+	case QRErrorCorrectLevel.Q :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+	case QRErrorCorrectLevel.H :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+	default :
+		return undefined;
+	}
+};
+
+module.exports = QRRSBlock;
+},"QRUtil":function(module,exports,require){var QRMode = require('./QRMode');
+var QRPolynomial = require('./QRPolynomial');
+var QRMath = require('./QRMath');
+var QRMaskPattern = require('./QRMaskPattern');
+
+var QRUtil = {
+
+    PATTERN_POSITION_TABLE : [
+        [],
+        [6, 18],
+        [6, 22],
+        [6, 26],
+        [6, 30],
+        [6, 34],
+        [6, 22, 38],
+        [6, 24, 42],
+        [6, 26, 46],
+        [6, 28, 50],
+        [6, 30, 54],        
+        [6, 32, 58],
+        [6, 34, 62],
+        [6, 26, 46, 66],
+        [6, 26, 48, 70],
+        [6, 26, 50, 74],
+        [6, 30, 54, 78],
+        [6, 30, 56, 82],
+        [6, 30, 58, 86],
+        [6, 34, 62, 90],
+        [6, 28, 50, 72, 94],
+        [6, 26, 50, 74, 98],
+        [6, 30, 54, 78, 102],
+        [6, 28, 54, 80, 106],
+        [6, 32, 58, 84, 110],
+        [6, 30, 58, 86, 114],
+        [6, 34, 62, 90, 118],
+        [6, 26, 50, 74, 98, 122],
+        [6, 30, 54, 78, 102, 126],
+        [6, 26, 52, 78, 104, 130],
+        [6, 30, 56, 82, 108, 134],
+        [6, 34, 60, 86, 112, 138],
+        [6, 30, 58, 86, 114, 142],
+        [6, 34, 62, 90, 118, 146],
+        [6, 30, 54, 78, 102, 126, 150],
+        [6, 24, 50, 76, 102, 128, 154],
+        [6, 28, 54, 80, 106, 132, 158],
+        [6, 32, 58, 84, 110, 136, 162],
+        [6, 26, 54, 82, 110, 138, 166],
+        [6, 30, 58, 86, 114, 142, 170]
+    ],
+
+    G15 : (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
+    G18 : (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0),
+    G15_MASK : (1 << 14) | (1 << 12) | (1 << 10)    | (1 << 4) | (1 << 1),
+
+    getBCHTypeInfo : function(data) {
+        var d = data << 10;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
+            d ^= (QRUtil.G15 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) ) );    
+        }
+        return ( (data << 10) | d) ^ QRUtil.G15_MASK;
+    },
+
+    getBCHTypeNumber : function(data) {
+        var d = data << 12;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
+            d ^= (QRUtil.G18 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) ) );    
+        }
+        return (data << 12) | d;
+    },
+
+    getBCHDigit : function(data) {
+
+        var digit = 0;
+
+        while (data !== 0) {
+            digit++;
+            data >>>= 1;
+        }
+
+        return digit;
+    },
+
+    getPatternPosition : function(typeNumber) {
+        return QRUtil.PATTERN_POSITION_TABLE[typeNumber - 1];
+    },
+
+    getMask : function(maskPattern, i, j) {
+        
+        switch (maskPattern) {
+            
+        case QRMaskPattern.PATTERN000 : return (i + j) % 2 === 0;
+        case QRMaskPattern.PATTERN001 : return i % 2 === 0;
+        case QRMaskPattern.PATTERN010 : return j % 3 === 0;
+        case QRMaskPattern.PATTERN011 : return (i + j) % 3 === 0;
+        case QRMaskPattern.PATTERN100 : return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 === 0;
+        case QRMaskPattern.PATTERN101 : return (i * j) % 2 + (i * j) % 3 === 0;
+        case QRMaskPattern.PATTERN110 : return ( (i * j) % 2 + (i * j) % 3) % 2 === 0;
+        case QRMaskPattern.PATTERN111 : return ( (i * j) % 3 + (i + j) % 2) % 2 === 0;
+
+        default :
+            throw new Error("bad maskPattern:" + maskPattern);
+        }
+    },
+
+    getErrorCorrectPolynomial : function(errorCorrectLength) {
+
+        var a = new QRPolynomial([1], 0);
+
+        for (var i = 0; i < errorCorrectLength; i++) {
+            a = a.multiply(new QRPolynomial([1, QRMath.gexp(i)], 0) );
+        }
+
+        return a;
+    },
+
+    getLengthInBits : function(mode, type) {
+
+        if (1 <= type && type < 10) {
+
+            // 1 - 9
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 10;
+            case QRMode.MODE_ALPHA_NUM  : return 9;
+            case QRMode.MODE_8BIT_BYTE  : return 8;
+            case QRMode.MODE_KANJI      : return 8;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else if (type < 27) {
+
+            // 10 - 26
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 12;
+            case QRMode.MODE_ALPHA_NUM  : return 11;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 10;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else if (type < 41) {
+
+            // 27 - 40
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 14;
+            case QRMode.MODE_ALPHA_NUM  : return 13;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 12;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else {
+            throw new Error("type:" + type);
+        }
+    },
+
+    getLostPoint : function(qrCode) {
+        
+        var moduleCount = qrCode.getModuleCount();
+        var lostPoint = 0;
+        var row = 0; 
+        var col = 0;
+
+        
+        // LEVEL1
+        
+        for (row = 0; row < moduleCount; row++) {
+
+            for (col = 0; col < moduleCount; col++) {
+
+                var sameCount = 0;
+                var dark = qrCode.isDark(row, col);
+
+                for (var r = -1; r <= 1; r++) {
+
+                    if (row + r < 0 || moduleCount <= row + r) {
+                        continue;
+                    }
+
+                    for (var c = -1; c <= 1; c++) {
+
+                        if (col + c < 0 || moduleCount <= col + c) {
+                            continue;
+                        }
+
+                        if (r === 0 && c === 0) {
+                            continue;
+                        }
+
+                        if (dark === qrCode.isDark(row + r, col + c) ) {
+                            sameCount++;
+                        }
+                    }
+                }
+
+                if (sameCount > 5) {
+                    lostPoint += (3 + sameCount - 5);
+                }
+            }
+        }
+
+        // LEVEL2
+
+        for (row = 0; row < moduleCount - 1; row++) {
+            for (col = 0; col < moduleCount - 1; col++) {
+                var count = 0;
+                if (qrCode.isDark(row,     col    ) ) count++;
+                if (qrCode.isDark(row + 1, col    ) ) count++;
+                if (qrCode.isDark(row,     col + 1) ) count++;
+                if (qrCode.isDark(row + 1, col + 1) ) count++;
+                if (count === 0 || count === 4) {
+                    lostPoint += 3;
+                }
+            }
+        }
+
+        // LEVEL3
+
+        for (row = 0; row < moduleCount; row++) {
+            for (col = 0; col < moduleCount - 6; col++) {
+                if (qrCode.isDark(row, col) && 
+                        !qrCode.isDark(row, col + 1) && 
+                         qrCode.isDark(row, col + 2) && 
+                         qrCode.isDark(row, col + 3) && 
+                         qrCode.isDark(row, col + 4) && 
+                        !qrCode.isDark(row, col + 5) && 
+                         qrCode.isDark(row, col + 6) ) {
+                    lostPoint += 40;
+                }
+            }
+        }
+
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount - 6; row++) {
+                if (qrCode.isDark(row, col) &&
+                        !qrCode.isDark(row + 1, col) &&
+                         qrCode.isDark(row + 2, col) &&
+                         qrCode.isDark(row + 3, col) &&
+                         qrCode.isDark(row + 4, col) &&
+                        !qrCode.isDark(row + 5, col) &&
+                         qrCode.isDark(row + 6, col) ) {
+                    lostPoint += 40;
+                }
+            }
+        }
+
+        // LEVEL4
+        
+        var darkCount = 0;
+
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount; row++) {
+                if (qrCode.isDark(row, col) ) {
+                    darkCount++;
+                }
+            }
+        }
+        
+        var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+        lostPoint += ratio * 10;
+
+        return lostPoint;       
+    }
+
+};
+
+module.exports = QRUtil;
+},"index":function(module,exports,require){//---------------------------------------------------------------------
+// QRCode for JavaScript
+//
+// Copyright (c) 2009 Kazuhiko Arase
+//
+// URL: http://www.d-project.com/
+//
+// Licensed under the MIT license:
+//   http://www.opensource.org/licenses/mit-license.php
+//
+// The word "QR Code" is registered trademark of 
+// DENSO WAVE INCORPORATED
+//   http://www.denso-wave.com/qrcode/faqpatent-e.html
+//
+//---------------------------------------------------------------------
+// Modified to work in node for this project (and some refactoring)
+//---------------------------------------------------------------------
+
+var QR8bitByte = require('./QR8bitByte');
+var QRUtil = require('./QRUtil');
+var QRPolynomial = require('./QRPolynomial');
+var QRRSBlock = require('./QRRSBlock');
+var QRBitBuffer = require('./QRBitBuffer');
+
+function QRCode(typeNumber, errorCorrectLevel) {
+	this.typeNumber = typeNumber;
+	this.errorCorrectLevel = errorCorrectLevel;
+	this.modules = null;
+	this.moduleCount = 0;
+	this.dataCache = null;
+	this.dataList = [];
+}
+
+QRCode.prototype = {
+	
+	addData : function(data) {
+		var newData = new QR8bitByte(data);
+		this.dataList.push(newData);
+		this.dataCache = null;
+	},
+	
+	isDark : function(row, col) {
+		if (row < 0 || this.moduleCount <= row || col < 0 || this.moduleCount <= col) {
+			throw new Error(row + "," + col);
+		}
+		return this.modules[row][col];
+	},
+
+	getModuleCount : function() {
+		return this.moduleCount;
+	},
+	
+	make : function() {
+		// Calculate automatically typeNumber if provided is < 1
+		if (this.typeNumber < 1 ){
+			var typeNumber = 1;
+			for (typeNumber = 1; typeNumber < 40; typeNumber++) {
+				var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, this.errorCorrectLevel);
+
+				var buffer = new QRBitBuffer();
+				var totalDataCount = 0;
+				for (var i = 0; i < rsBlocks.length; i++) {
+					totalDataCount += rsBlocks[i].dataCount;
+				}
+
+				for (var x = 0; x < this.dataList.length; x++) {
+					var data = this.dataList[x];
+					buffer.put(data.mode, 4);
+					buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+					data.write(buffer);
+				}
+				if (buffer.getLengthInBits() <= totalDataCount * 8)
+					break;
+			}
+			this.typeNumber = typeNumber;
+		}
+		this.makeImpl(false, this.getBestMaskPattern() );
+	},
+	
+	makeImpl : function(test, maskPattern) {
+		
+		this.moduleCount = this.typeNumber * 4 + 17;
+		this.modules = new Array(this.moduleCount);
+		
+		for (var row = 0; row < this.moduleCount; row++) {
+			
+			this.modules[row] = new Array(this.moduleCount);
+			
+			for (var col = 0; col < this.moduleCount; col++) {
+				this.modules[row][col] = null;//(col + row) % 3;
+			}
+		}
+	
+		this.setupPositionProbePattern(0, 0);
+		this.setupPositionProbePattern(this.moduleCount - 7, 0);
+		this.setupPositionProbePattern(0, this.moduleCount - 7);
+		this.setupPositionAdjustPattern();
+		this.setupTimingPattern();
+		this.setupTypeInfo(test, maskPattern);
+		
+		if (this.typeNumber >= 7) {
+			this.setupTypeNumber(test);
+		}
+	
+		if (this.dataCache === null) {
+			this.dataCache = QRCode.createData(this.typeNumber, this.errorCorrectLevel, this.dataList);
+		}
+	
+		this.mapData(this.dataCache, maskPattern);
+	},
+
+	setupPositionProbePattern : function(row, col)  {
+		
+		for (var r = -1; r <= 7; r++) {
+			
+			if (row + r <= -1 || this.moduleCount <= row + r) continue;
+			
+			for (var c = -1; c <= 7; c++) {
+				
+				if (col + c <= -1 || this.moduleCount <= col + c) continue;
+				
+				if ( (0 <= r && r <= 6 && (c === 0 || c === 6) ) || 
+                     (0 <= c && c <= 6 && (r === 0 || r === 6) ) || 
+                     (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+					this.modules[row + r][col + c] = true;
+				} else {
+					this.modules[row + r][col + c] = false;
+				}
+			}		
+		}		
+	},
+	
+	getBestMaskPattern : function() {
+	
+		var minLostPoint = 0;
+		var pattern = 0;
+	
+		for (var i = 0; i < 8; i++) {
+			
+			this.makeImpl(true, i);
+	
+			var lostPoint = QRUtil.getLostPoint(this);
+	
+			if (i === 0 || minLostPoint >  lostPoint) {
+				minLostPoint = lostPoint;
+				pattern = i;
+			}
+		}
+	
+		return pattern;
+	},
+	
+	createMovieClip : function(target_mc, instance_name, depth) {
+	
+		var qr_mc = target_mc.createEmptyMovieClip(instance_name, depth);
+		var cs = 1;
+	
+		this.make();
+
+		for (var row = 0; row < this.modules.length; row++) {
+			
+			var y = row * cs;
+			
+			for (var col = 0; col < this.modules[row].length; col++) {
+	
+				var x = col * cs;
+				var dark = this.modules[row][col];
+			
+				if (dark) {
+					qr_mc.beginFill(0, 100);
+					qr_mc.moveTo(x, y);
+					qr_mc.lineTo(x + cs, y);
+					qr_mc.lineTo(x + cs, y + cs);
+					qr_mc.lineTo(x, y + cs);
+					qr_mc.endFill();
+				}
+			}
+		}
+		
+		return qr_mc;
+	},
+
+	setupTimingPattern : function() {
+		
+		for (var r = 8; r < this.moduleCount - 8; r++) {
+			if (this.modules[r][6] !== null) {
+				continue;
+			}
+			this.modules[r][6] = (r % 2 === 0);
+		}
+	
+		for (var c = 8; c < this.moduleCount - 8; c++) {
+			if (this.modules[6][c] !== null) {
+				continue;
+			}
+			this.modules[6][c] = (c % 2 === 0);
+		}
+	},
+	
+	setupPositionAdjustPattern : function() {
+	
+		var pos = QRUtil.getPatternPosition(this.typeNumber);
+		
+		for (var i = 0; i < pos.length; i++) {
+		
+			for (var j = 0; j < pos.length; j++) {
+			
+				var row = pos[i];
+				var col = pos[j];
+				
+				if (this.modules[row][col] !== null) {
+					continue;
+				}
+				
+				for (var r = -2; r <= 2; r++) {
+				
+					for (var c = -2; c <= 2; c++) {
+					
+						if (Math.abs(r) === 2 || 
+                            Math.abs(c) === 2 ||
+                            (r === 0 && c === 0) ) {
+							this.modules[row + r][col + c] = true;
+						} else {
+							this.modules[row + r][col + c] = false;
+						}
+					}
+				}
+			}
+		}
+	},
+	
+	setupTypeNumber : function(test) {
+	
+		var bits = QRUtil.getBCHTypeNumber(this.typeNumber);
+        var mod;
+	
+		for (var i = 0; i < 18; i++) {
+			mod = (!test && ( (bits >> i) & 1) === 1);
+			this.modules[Math.floor(i / 3)][i % 3 + this.moduleCount - 8 - 3] = mod;
+		}
+	
+		for (var x = 0; x < 18; x++) {
+			mod = (!test && ( (bits >> x) & 1) === 1);
+			this.modules[x % 3 + this.moduleCount - 8 - 3][Math.floor(x / 3)] = mod;
+		}
+	},
+	
+	setupTypeInfo : function(test, maskPattern) {
+	
+		var data = (this.errorCorrectLevel << 3) | maskPattern;
+		var bits = QRUtil.getBCHTypeInfo(data);
+        var mod;
+	
+		// vertical		
+		for (var v = 0; v < 15; v++) {
+	
+			mod = (!test && ( (bits >> v) & 1) === 1);
+	
+			if (v < 6) {
+				this.modules[v][8] = mod;
+			} else if (v < 8) {
+				this.modules[v + 1][8] = mod;
+			} else {
+				this.modules[this.moduleCount - 15 + v][8] = mod;
+			}
+		}
+	
+		// horizontal
+		for (var h = 0; h < 15; h++) {
+	
+			mod = (!test && ( (bits >> h) & 1) === 1);
+			
+			if (h < 8) {
+				this.modules[8][this.moduleCount - h - 1] = mod;
+			} else if (h < 9) {
+				this.modules[8][15 - h - 1 + 1] = mod;
+			} else {
+				this.modules[8][15 - h - 1] = mod;
+			}
+		}
+	
+		// fixed module
+		this.modules[this.moduleCount - 8][8] = (!test);
+	
+	},
+	
+	mapData : function(data, maskPattern) {
+		
+		var inc = -1;
+		var row = this.moduleCount - 1;
+		var bitIndex = 7;
+		var byteIndex = 0;
+		
+		for (var col = this.moduleCount - 1; col > 0; col -= 2) {
+	
+			if (col === 6) col--;
+	
+			while (true) {
+	
+				for (var c = 0; c < 2; c++) {
+					
+					if (this.modules[row][col - c] === null) {
+						
+						var dark = false;
+	
+						if (byteIndex < data.length) {
+							dark = ( ( (data[byteIndex] >>> bitIndex) & 1) === 1);
+						}
+	
+						var mask = QRUtil.getMask(maskPattern, row, col - c);
+	
+						if (mask) {
+							dark = !dark;
+						}
+						
+						this.modules[row][col - c] = dark;
+						bitIndex--;
+	
+						if (bitIndex === -1) {
+							byteIndex++;
+							bitIndex = 7;
+						}
+					}
+				}
+								
+				row += inc;
+	
+				if (row < 0 || this.moduleCount <= row) {
+					row -= inc;
+					inc = -inc;
+					break;
+				}
+			}
+		}
+		
+	}
+
+};
+
+QRCode.PAD0 = 0xEC;
+QRCode.PAD1 = 0x11;
+
+QRCode.createData = function(typeNumber, errorCorrectLevel, dataList) {
+	
+	var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
+	
+	var buffer = new QRBitBuffer();
+	
+	for (var i = 0; i < dataList.length; i++) {
+		var data = dataList[i];
+		buffer.put(data.mode, 4);
+		buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+		data.write(buffer);
+	}
+
+	// calc num max data.
+	var totalDataCount = 0;
+	for (var x = 0; x < rsBlocks.length; x++) {
+		totalDataCount += rsBlocks[x].dataCount;
+	}
+
+	if (buffer.getLengthInBits() > totalDataCount * 8) {
+		throw new Error("code length overflow. (" + 
+            buffer.getLengthInBits() + 
+            ">" +  
+            totalDataCount * 8 + 
+            ")");
+	}
+
+	// end code
+	if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+		buffer.put(0, 4);
+	}
+
+	// padding
+	while (buffer.getLengthInBits() % 8 !== 0) {
+		buffer.putBit(false);
+	}
+
+	// padding
+	while (true) {
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD0, 8);
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD1, 8);
+	}
+
+	return QRCode.createBytes(buffer, rsBlocks);
+};
+
+QRCode.createBytes = function(buffer, rsBlocks) {
+
+	var offset = 0;
+	
+	var maxDcCount = 0;
+	var maxEcCount = 0;
+	
+	var dcdata = new Array(rsBlocks.length);
+	var ecdata = new Array(rsBlocks.length);
+	
+	for (var r = 0; r < rsBlocks.length; r++) {
+
+		var dcCount = rsBlocks[r].dataCount;
+		var ecCount = rsBlocks[r].totalCount - dcCount;
+
+		maxDcCount = Math.max(maxDcCount, dcCount);
+		maxEcCount = Math.max(maxEcCount, ecCount);
+		
+		dcdata[r] = new Array(dcCount);
+		
+		for (var i = 0; i < dcdata[r].length; i++) {
+			dcdata[r][i] = 0xff & buffer.buffer[i + offset];
+		}
+		offset += dcCount;
+		
+		var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+		var rawPoly = new QRPolynomial(dcdata[r], rsPoly.getLength() - 1);
+
+		var modPoly = rawPoly.mod(rsPoly);
+		ecdata[r] = new Array(rsPoly.getLength() - 1);
+		for (var x = 0; x < ecdata[r].length; x++) {
+            var modIndex = x + modPoly.getLength() - ecdata[r].length;
+			ecdata[r][x] = (modIndex >= 0)? modPoly.get(modIndex) : 0;
+		}
+
+	}
+	
+	var totalCodeCount = 0;
+	for (var y = 0; y < rsBlocks.length; y++) {
+		totalCodeCount += rsBlocks[y].totalCount;
+	}
+
+	var data = new Array(totalCodeCount);
+	var index = 0;
+
+	for (var z = 0; z < maxDcCount; z++) {
+		for (var s = 0; s < rsBlocks.length; s++) {
+			if (z < dcdata[s].length) {
+				data[index++] = dcdata[s][z];
+			}
+		}
+	}
+
+	for (var xx = 0; xx < maxEcCount; xx++) {
+		for (var t = 0; t < rsBlocks.length; t++) {
+			if (xx < ecdata[t].length) {
+				data[index++] = ecdata[t][xx];
+			}
+		}
+	}
+
+	return data;
+
+};
+
+module.exports = QRCode;
+}},cache={};function load(k){if(cache[k])return cache[k].exports;const m={exports:{}};cache[k]=m;modules[k](m,m.exports,p=>load(p.replace(/^\.\//,'')));return m.exports;}window.InventoryQRCode=load('index');})();</script><script>
+(()=>{'use strict';const KEY='dafu_inventory_count_v1',$=id=>document.getElementById(id),clone=o=>JSON.parse(JSON.stringify(o)),now=()=>new Date().toLocaleString('zh-CN',{hour12:false}),date=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')},esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));let state;try{state=JSON.parse(localStorage.getItem(KEY))}catch{}if(!state||!Array.isArray(state.products))state={task:date().replace(/-/g,'')+'-01',member:'',products:[],logs:[],archives:[],seq:0,ended:false};state.archives=Array.isArray(state.archives)?state.archives:[];state.logs=Array.isArray(state.logs)?state.logs:[];state.locations=Array.isArray(state.locations)?state.locations:[];state.activeLocation=state.activeLocation||'';for(const p of state.products){if(p.location&&!state.locations.includes(p.location))state.locations.push(p.location)}let verifiedLocation='',viewMode='home',current='',editing='',camera=null,audio=null,sound=true,cameraArmed=true,cameraMiss=0,cameraHit=0,cameraMode='sku',modalNew=false;const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch{toast('存储空间不足，请导出数据备份')}};function toast(msg){$('toast').textContent=msg;$('toast').style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>$('toast').style.display='none',2600)}function beep(type='ok'){if(!sound)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();audio.resume();const t=audio.currentTime;for(const [f,d] of(type==='error'?[[330,0],[240,.16]]:[[850,0],[1200,.12]])){const o=audio.createOscillator(),g=audio.createGain();o.type=type==='error'?'sawtooth':'sine';o.frequency.value=f;g.gain.setValueAtTime(.0001,t+d);g.gain.linearRampToValueAtTime(.25,t+d+.015);g.gain.exponentialRampToValueAtTime(.0001,t+d+.13);o.connect(g);g.connect(audio.destination);o.start(t+d);o.stop(t+d+.15)}}catch{}}document.addEventListener('pointerdown',()=>{if(audio?.state==='suspended')audio.resume()},{passive:true});function log(action,code,detail){state.logs.unshift({seq:++state.seq,time:now(),member:state.member,action,code,detail});save()}function renderLocations(){const select=$('activeLocation'),currentLoc=state.activeLocation;select.innerHTML='<option value="">-- 请选择库位 --</option>'+state.locations.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join('');select.value=state.locations.includes(currentLoc)?currentLoc:'';$('locationOptions').innerHTML=state.locations.map(l=>`<option value="${esc(l)}"></option>`).join('');$('locationSummary').textContent=state.activeLocation?`当前：${state.activeLocation} · ${state.products.filter(p=>Number(p.locations?.[state.activeLocation])>0||(!p.locations&&p.location===state.activeLocation)).length} 种商品`:'请先添加或选择库位';$('locationList').innerHTML=state.locations.map(l=>`<div class="record row"><div><b>${esc(l)}</b><div class="muted">${state.products.filter(p=>Number(p.locations?.[l])>0||(!p.locations&&p.location===l)).length} 种商品</div></div><button class="secondary" data-use-location="${esc(l)}">使用</button><button class="secondary" data-remove-location="${esc(l)}">删除</button></div>`).join('')||'<p class="muted">暂无库位</p>';document.querySelectorAll('[data-use-location]').forEach(b=>b.onclick=()=>{$('locationModal').classList.add('hidden');toast('请进入任务并扫描此库位二维码')});document.querySelectorAll('[data-remove-location]').forEach(b=>b.onclick=()=>{const l=b.dataset.removeLocation;if(!confirm('删除库位 '+l+'？已有商品的库位记录仍会保留。'))return;state.locations=state.locations.filter(x=>x!==l);if(state.activeLocation===l)state.activeLocation='';save();renderLocations()})}
+$('activeLocation').onchange=()=>{renderLocations();toast('必须扫描库位二维码才能切换库位')};$('addLocationBtn').onclick=()=>{$('newLocationInput').value='';$('locationModal').classList.remove('hidden');renderLocations();$('newLocationInput').focus()};$('manageLocationsBtn').onclick=()=>{$('locationModal').classList.remove('hidden');renderLocations()};$('closeLocationBtn').onclick=()=>$('locationModal').classList.add('hidden');$('saveLocationBtn').onclick=()=>{const l=$('newLocationInput').value.trim();if(!l)return toast('请输入库位编号');if(!state.locations.includes(l))state.locations.push(l);save();renderLocations();$('newLocationInput').value='';toast('库位 '+l+' 已保存，请打印库位码')};$('newLocationInput').onkeydown=e=>{if(e.key==='Enter')$('saveLocationBtn').click()};
+function mergeSkuRows(items){const map=new Map();for(const source of items){const code=String(source.code||'').trim().toUpperCase();if(!code)continue;let p=map.get(code);if(!p){p={...source,code,locations:{},actual:0};map.set(code,p)}const rows=locationRows(source);for(const [loc,n] of rows){p.locations[loc]=(Number(p.locations[loc])||0)+Number(n)}p.actual+=Number(source.actual)||0}return [...map.values()]}function normalizeSkuRows(){if(state.products.length!==new Set(state.products.map(p=>String(p.code||'').trim().toUpperCase())).size){state.products=mergeSkuRows(state.products)}}normalizeSkuRows();function find(code){return state.products.find(p=>p.code===code)}function difference(p){return p.expected==null?null:p.actual-p.expected}function status(p){const d=difference(p);return d===null?'未设账面':d>0?'盘盈':d<0?'盘亏':'一致'}function metrics(){return{types:state.products.length,qty:state.products.reduce((n,p)=>n+p.actual,0),plus:state.products.filter(p=>difference(p)>0).length,minus:state.products.filter(p=>difference(p)<0).length}}function statsHtml(){const m=metrics();return [['商品种类',m.types],['实盘总数',m.qty]].map(([k,v])=>`<div class="stat"><span>${k}</span><strong>${v}</strong></div>`).join('')}
+function locationRows(p){const locs=p.locations&&typeof p.locations==='object'?p.locations:{};const entries=Object.entries(locs).filter(([k,v])=>k&&Number(v)>0).sort((a,b)=>a[0].localeCompare(b[0]));const allocated=entries.reduce((n,[,v])=>n+Number(v),0);if(!entries.length&&p.actual>0)entries.push([p.location||'未分配库位',p.actual]);else if(allocated<p.actual)entries.push(['未分配库位',p.actual-allocated]);return entries}function locationHtml(p){return `<div class="location-breakdown">${locationRows(p).map(([l,n])=>`<div class="loc-row"><span>📍 ${esc(l)}</span><b>${n} 箱</b></div>`).join('')}<div class="loc-row total"><span>合计</span><b>${p.actual} 箱</b></div></div>`}function removeOne(p){if(!verifiedLocation)return toast('请先扫描库位码');if(state.ended)return toast('任务已结束');if(p.actual<1)return toast('实际盘点不能小于0');const loc=state.activeLocation;if(!loc)return toast('请先选择要纠错的库位');p.locations=p.locations||{};if(!(Number(p.locations[loc])>0))return toast('当前库位 '+loc+' 没有此 SKU 的盘点箱数');if(!confirm('确认减少库位 '+loc+' 的 1 箱？'))return;p.locations[loc]--;if(p.locations[loc]===0)delete p.locations[loc];p.actual--;log('盘点纠错',p.code,'库位 '+loc+' -1 箱 → SKU 合计 '+p.actual);render()}function render(){renderLocations();updateGate();const p=find(current);$('taskDisplay').textContent=`任务：${state.task}　操作员：${state.member||'未填写'}`;$('taskName').textContent=state.task;$('taskStatus').textContent=state.ended?'已结束':'进行中';$('endBtn').disabled=state.ended;$('barcode').disabled=state.ended||!verifiedLocation;$('scanBtn').disabled=state.ended||!verifiedLocation;$('compactStats').innerHTML=statsHtml();$('fullStats').innerHTML=statsHtml();$('currentArea').innerHTML=p?`<div class="card"><div class="row"><b>${esc(p.code)}</b></div><div class="muted">库位：${esc(Object.keys(p.locations||{}).join('、')||p.location||'未填写')}</div>${locationHtml(p)}<div class="numbers" style="margin-top:12px;grid-template-columns:1fr"><div class="num"><span>实际盘点</span><strong>${p.actual} 箱</strong></div></div><button id="addOne" class="primary">＋ 盘点增加 1 件</button><button id="editCurrent" class="secondary full">✎ 修改备注 / 数量</button><button id="subtractOne" class="secondary full">− 纠错减少 1 件</button></div>`:'<div class="card"><p class="muted">请扫描商品条码开始盘点。</p></div>';if(p){$('addOne').onclick=()=>count(p.code);$('editCurrent').onclick=()=>openProduct(p.code,false);$('subtractOne').onclick=()=>{if(state.ended)return toast('任务已结束');removeOne(p)}}const list=state.products.map(p=>`<div class="record"><div style="font-weight:800;font-size:15px;margin-bottom:6px">${esc(p.code)}</div><div class="muted">库位 ${esc(Object.keys(p.locations||{}).join('、')||p.location||'未填写')}</div>${locationHtml(p)}<div>实际合计：<b>${p.actual} 箱</b></div><button class="secondary" data-edit="${esc(p.code)}" style="margin-top:7px">查看 / 修改</button></div>`).join('');$('productList').innerHTML=list||'<p class="muted">暂无盘点商品</p>';$('logList').innerHTML=state.logs.map(l=>`<div class="record"><b>#${l.seq} ${esc(l.action)}</b> · ${esc(l.code)}<div class="muted">${esc(l.time)} · ${esc(l.member)} · ${esc(l.detail)}</div></div>`).join('')||'<p class="muted">暂无操作记录</p>';$('archiveList').innerHTML=state.archives.map((a,i)=>`<div class="record"><div class="row"><b>${esc(a.task)}</b><span class="pill">${esc(a.status||'暂停')}</span></div><div class="muted">${(a.products||[]).length} 种商品 · ${esc(a.member)} · ${esc(a.endedAt||'')}</div><button class="secondary" data-restore="${i}" style="margin-top:8px">进入 / 恢复任务</button><button class="secondary" data-export="${i}" style="margin-top:8px">导出 CSV</button></div>`).join('')||'<p class="muted">暂无历史任务</p>';document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openProduct(b.dataset.edit,false));document.querySelectorAll('[data-restore]').forEach(b=>b.onclick=()=>restore(Number(b.dataset.restore)));document.querySelectorAll('[data-export]').forEach(b=>b.onclick=()=>exportProducts(state.archives[Number(b.dataset.export)]))}
+function openProduct(code,isNew){editing=code;modalNew=isNew;const p=find(code);$('productModalTitle').textContent='按库位修改盘点箱数';$('productCode').textContent='SKU：'+code;const locs=[...new Set([...(state.locations||[]),...Object.keys(p?.locations||{}),state.activeLocation].filter(Boolean))];const select=$('productLocation');select.innerHTML=locs.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join('');const preferred=(p?.locations&&p.locations[state.activeLocation]!==undefined)?state.activeLocation:(p?.location||state.activeLocation||locs[0]);select.value=locs.includes(preferred)?preferred:locs[0];const update=()=>{$('productActual').value=Number(p?.locations?.[select.value]||0)};select.onchange=update;update();$('productModal').classList.remove('hidden')}
+function count(raw){if(!verifiedLocation||state.activeLocation!==verifiedLocation){beep('error');toast('请先扫描库位码，验证后才能盘点');return}if(!state.activeLocation){toast('请先选择或添加库位');return}if(state.ended)return toast('任务已结束，请创建或恢复任务');if(!state.member.trim()){$('settingsModal').classList.remove('hidden');toast('请先填写操作人员');return}const code=String(raw||'').trim().toUpperCase();if(!code||code.length>80)return toast('请输入有效商品条码');if(!$('productModal').classList.contains('hidden'))return;let p=find(code);if(!p){p={code,name:code,location:state.activeLocation,locations:{[state.activeLocation]:1},expected:null,actual:1};state.products.unshift(p);log('首次扫码自动盘点',code,'库位 '+state.activeLocation+' · 实盘 1');}else{p.actual++;p.locations=p.locations||{};p.locations[state.activeLocation]=(p.locations[state.activeLocation]||0)+1;log('扫码盘点',code,'库位 '+state.activeLocation+' · 实盘 +1 → '+p.actual);}current=code;beep();render();$('barcode').value='';toast(`SKU ${code} · 合并累计 ${p.actual} 件`)}$('scanBtn').onclick=()=>count($('barcode').value);$('barcode').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();count($('barcode').value)}});$('barcode').addEventListener('input',e=>{const i=e.target;const a=i.selectionStart,b=i.selectionEnd;i.value=i.value.toUpperCase();try{i.setSelectionRange(a,b)}catch(_){}});$('saveProduct').onclick=()=>{if(!verifiedLocation)return toast('请先扫描库位码');if(state.ended)return toast('任务已结束');const location=$('productLocation').value.trim(),actual=Number($('productActual').value);if(!location||!state.locations.includes(location))return toast('请选择已有库位');if($('productActual').value===''||!Number.isSafeInteger(actual)||actual<0)return toast('库位箱数必须为非负整数');let p=find(editing);if(!p){p={code:editing,name:editing,location,locations:{},actual:0};state.products.unshift(p)}p.locations=p.locations||{};const before=Number(p.locations[location]||0),oldTotal=Number(p.actual||0);if(actual===0)delete p.locations[location];else p.locations[location]=actual;p.actual=Object.values(p.locations).reduce((sum,n)=>sum+Number(n||0),0);p.location=location;log('按库位修改盘点数量',editing,`库位 ${location}：${before} → ${actual} 箱；SKU 合计 ${oldTotal} → ${p.actual} 箱`);current=editing;$('productModal').classList.add('hidden');beep();save();render();renderLocations();toast(`已保存 ${location}：${actual} 箱；SKU 合计 ${p.actual} 箱`) };$('cancelProduct').onclick=()=>$('productModal').classList.add('hidden');$('soundBtn').onclick=()=>{sound=!sound;$('soundBtn').textContent=sound?'🔊 声音开启':'🔇 声音关闭';if(sound)beep()};for(const k of [...'1234567890',...'QWERTYUIOP',...'ASDFGHJKL',...'ZXCVBNM','-','清空','空格','⌫']){const b=document.createElement('button');b.type='button';b.textContent=k;if(k==='清空'||k==='空格')b.className='wide-key';if(k==='⌫')b.className='back-key';b.onclick=()=>{const i=$('barcode');const start=i.selectionStart??i.value.length,end=i.selectionEnd??i.value.length;if(k==='清空'){i.value=''}else if(k==='⌫'){const from=start===end?Math.max(0,start-1):start;i.value=i.value.slice(0,from)+i.value.slice(end);i.setSelectionRange(from,from)}else{const v=k==='空格'?' ':k;i.value=i.value.slice(0,start)+v+i.value.slice(end);i.setSelectionRange(start+v.length,start+v.length)}i.focus({preventScroll:true})};$('keypad').appendChild(b)}$('keyBtn').onclick=()=>{const show=$('keypad').classList.toggle('hidden')===false;$('keyBtn').textContent=show?'⌨ 收起键盘':'⌨ 字母数字键盘'};document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('main>section').forEach(x=>x.classList.toggle('hidden',x.id!=='tab-'+b.dataset.tab));render()});
+$('cameraBtn').onclick=async()=>{if(camera){try{await camera.stop();camera.clear()}catch{}camera=null;$('camera').classList.add('hidden');$('cameraBtn').textContent='📷 摄像头';return}if(state.ended)return toast('任务已结束');if(!window.Html5Qrcode)return toast('摄像头组件未加载，请联网后重试');try{$('camera').classList.remove('hidden');camera=new Html5Qrcode('camera');cameraArmed=true;await camera.start({facingMode:'environment'},{fps:10,qrbox:{width:230,height:160}},code=>{if(!cameraArmed||!$('productModal').classList.contains('hidden'))return;cameraArmed=false;cameraMiss=0;cameraHit=Date.now();(cameraMode==='location'?verifyLocation(code):count(code))},()=>{if(cameraArmed)return;if(++cameraMiss>=5&&Date.now()-cameraHit>650){cameraArmed=true;cameraMiss=0}});$('cameraBtn').textContent='关闭摄像头'}catch{camera=null;$('camera').classList.add('hidden');toast('无法打开摄像头，请检查 HTTPS 和权限')}};
+function csvFile(rows,filename){const content='sep=;\r\n'+rows.map((r,ri)=>r.map((v,ci)=>{const raw=String(v??'');const numeric=ri>0&&filename.startsWith('库存盘点_')&&ci>=2&&/^\d+$/.test(raw);return numeric?raw:'"'+raw.replace(/"/g,'""')+'"'}).join(';')).join('\r\n');const utf16=new Uint8Array(2+content.length*2);utf16[0]=255;utf16[1]=254;for(let i=0;i<content.length;i++){const c=content.charCodeAt(i);utf16[2+i*2]=c&255;utf16[3+i*2]=c>>8}const u=URL.createObjectURL(new Blob([utf16],{type:'text/csv;charset=utf-16le'})),a=document.createElement('a');a.href=u;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(u),1500)}function exportProducts(t=state){const products=mergeSkuRows(t.products||[]);const locations=[...new Set(products.flatMap(p=>pdfLocationRows(p).map(([loc])=>loc)))].sort((a,b)=>a.localeCompare(b,'zh-CN',{numeric:true}));const rows=[['Task ID','SKU','Total Boxes',...locations.map(l=>'Location '+l)],...products.map(p=>{const qty=Object.fromEntries(locationRows(p));return [t.task,p.code,p.actual,...locations.map(l=>Number(qty[l]||0))]})];csvFile(rows,`库存盘点_${t.task}.csv`)}$('exportBtn').onclick=()=>exportProducts();$('exportLogsBtn').onclick=()=>csvFile([['Sequence','Time','Operator','Action','SKU','Details'],...state.logs.slice().reverse().map(l=>[l.seq,l.time,l.member,l.action,l.code,l.detail])],`盘点扫码流水_${state.task}.csv`);
+function snapshot(status){return{task:state.task,member:state.member,products:clone(state.products),logs:clone(state.logs),seq:state.seq,status,endedAt:status==='已结束'?now():''}}function nextBatch(d){const prefix=d.replace(/-/g,'')+'-';return Math.max(0,...[state.task,...state.archives.map(a=>a.task)].filter(x=>String(x).startsWith(prefix)).map(x=>Number(x.slice(prefix.length))||0))+1}function taskCode(){const d=$('taskDate').value,n=Number($('taskBatch').value);$('taskCode').value=d&&Number.isInteger(n)&&n>0&&n<=999?d.replace(/-/g,'')+'-'+String(n).padStart(2,'0'):''}function manage(){const d=date();$('taskDate').value=d;$('taskBatch').value=nextBatch(d);$('taskMember').value=state.member;taskCode();$('availableTasks').innerHTML=state.archives.map((a,i)=>`<div class="record row"><div><b>${esc(a.task)}</b><div class="muted">${esc(a.status)} · ${(a.products||[]).length} 种商品</div></div><button class="secondary" data-switch="${i}">进入</button></div>`).join('')||'<p class="muted">暂无其他任务</p>';document.querySelectorAll('[data-switch]').forEach(b=>b.onclick=()=>{restore(Number(b.dataset.switch));$('taskModal').classList.add('hidden')});$('taskModal').classList.remove('hidden')}function restore(i){const t=state.archives[i];if(!t)return;if(!confirm('进入任务 '+t.task+'？当前任务将自动保存。'))return;state.archives.splice(i,1);if(!state.ended&&(state.products.length||state.logs.length))state.archives.unshift(snapshot('暂停'));Object.assign(state,{task:t.task,member:t.member,products:clone(t.products||[]),logs:clone(t.logs||[]),seq:t.seq||0,ended:false});current='';verifiedLocation='';state.activeLocation='';save();render();showWork();toast('已进入任务 '+t.task)}$('manageBtn').onclick=manage;$('closeTaskModal').onclick=()=>$('taskModal').classList.add('hidden');$('taskDate').onchange=()=>{$('taskBatch').value=nextBatch($('taskDate').value);taskCode()};$('taskBatch').oninput=taskCode;$('createTask').onclick=()=>{const task=$('taskCode').value,member=$('taskMember').value.trim();if(!task||!member)return toast('请填写有效任务编号及操作人员');if([state.task,...state.archives.map(a=>a.task)].includes(task))return toast('该任务编号已存在');if(!confirm('创建新任务 '+task+'？当前盘点数据将保留。'))return;if(!state.ended&&(state.products.length||state.logs.length))state.archives.unshift(snapshot('暂停'));Object.assign(state,{task,member,products:[],logs:[],seq:0,ended:false});current='';verifiedLocation='';state.activeLocation='';save();$('taskModal').classList.add('hidden');render();showWork();toast('已创建任务 '+task)};$('endBtn').onclick=async()=>{if(state.ended)return;if(!confirm('结束当前盘点？统计将清零，记录保存在历史任务中。'))return;state.archives.unshift(snapshot('已结束'));state.products=[];state.logs=[];state.seq=0;state.ended=true;current='';if(camera){try{await camera.stop();camera.clear()}catch{}camera=null;$('camera').classList.add('hidden');$('cameraBtn').textContent='📷 摄像头'}verifiedLocation='';state.activeLocation='';save();render();showHome();toast('盘点已结束，历史数据已保存')};$('openSettings').onclick=()=>{$('memberInput').value=state.member;$('settingsModal').classList.remove('hidden')};$('openSettings').onkeydown=e=>{if(e.key==='Enter')$('openSettings').click()};$('closeSettings').onclick=()=>$('settingsModal').classList.add('hidden');$('saveSettings').onclick=()=>{const member=$('memberInput').value.trim();if(!member)return toast('操作人员必填');state.member=member;save();$('settingsModal').classList.add('hidden');render();toast('操作人员已保存')};
+// 导航、库位扫码验证和 A4 库位码打印
+function updateGate(){const ready=!!verifiedLocation&&!state.ended;$('locationGateStatus').className='notice '+(ready?'success':'info');$('locationGateStatus').textContent=ready?'✓ 库位 '+verifiedLocation+' 已验证，可开始扫描 SKU':'尚未扫描库位码，禁止商品盘点';$('locationBarcode').value=ready?verifiedLocation:'';$('barcode').disabled=!ready;$('scanBtn').disabled=!ready;$('keyBtn').disabled=!ready;$('activeLocation').disabled=true;$('locationSummary').textContent=ready?'已扫码验证库位：'+verifiedLocation:'请扫描库位码后开始盘点';$('verifiedLocationDisplay').textContent=ready?verifiedLocation:'—';}
+function setStep(step){document.body.classList.remove('step-home','step-location','step-sku');document.body.classList.add('step-'+step);if(step==='location'){$('locationBarcode').value='';setTimeout(()=>{if(viewMode==='work')$('locationBarcode').focus({preventScroll:true})},40)}}
+function showHome(){setStep('home');viewMode='home';$('homePage').classList.remove('hidden');document.querySelector('.tabs').classList.add('hidden');document.querySelector('main').classList.add('hidden');renderHome()}
+function showWork(){viewMode='work';verifiedLocation='';state.activeLocation='';setStep('location');$('homePage').classList.add('hidden');document.querySelector('.tabs').classList.remove('hidden');document.querySelector('main').classList.remove('hidden');document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab==='scan'));document.querySelectorAll('main>section').forEach(x=>x.classList.toggle('hidden',x.id!=='tab-scan'));render()}
+function renderHome(){const all=[{task:state.task,status:state.ended?'已结束':'当前任务',products:state.products},...state.archives];$('homeTasks').innerHTML=all.map((t,i)=>`<div class="home-task row"><div><b>${esc(t.task)}</b><div class="muted">${esc(t.status||'暂停')} · ${(t.products||[]).length} 种 SKU</div></div>${i===0&&!state.ended?'<button class="secondary" id="homeContinue">继续</button>':i>0?`<button class="secondary" data-home-join="${i-1}">加入</button>`:''}</div>`).join('');const btn=$('homeContinue');if(btn)btn.onclick=()=>{verifiedLocation='';state.activeLocation='';showWork()};document.querySelectorAll('[data-home-join]').forEach(b=>b.onclick=()=>restore(Number(b.dataset.homeJoin)))}
+$('homeSkuPrint').onclick=()=>{$('skuPrintModal').classList.remove('hidden')};$('closeSkuPrint').onclick=()=>$('skuPrintModal').classList.add('hidden');$('loadCountedSkus').onclick=()=>{const old=$('skuPrintInput').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);$('skuPrintInput').value=[...new Set([...old,...state.products.map(p=>p.code).filter(Boolean)])].join('\n');toast('已导入当前任务 SKU')};$('homeCreate').onclick=()=>manage();$('homeJoin').onclick=()=>{renderHome();$('homeTasks').scrollIntoView({behavior:'smooth',block:'start'});toast('请选择本机已有任务的「继续」或「加入」')};$('homeLocations').onclick=()=>{$('locationModal').classList.remove('hidden');renderLocations()};$('backHome').onclick=()=>{verifiedLocation='';state.activeLocation='';if(camera){$('cameraBtn').click()}save();showHome()};
+function verifyLocation(raw){const value=String(raw||'').trim().toUpperCase(),code=value.startsWith('LOC:')?value.slice(4):value;if(state.ended)return toast('任务已结束');const actual=state.locations.find(l=>l.toUpperCase()===code);if(!actual){beep('error');toast('库位码无效或未在库位设置中登记：'+code);return}verifiedLocation=actual;state.activeLocation=actual;save();beep();setStep('sku');render();toast('库位 '+actual+' 验证成功，开始盘点');$('barcode').focus({preventScroll:true})}
+$('confirmLocation').onclick=()=>verifyLocation($('locationBarcode').value);$('locationBarcode').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();verifyLocation($('locationBarcode').value)}};$('changeLocation').onclick=()=>{verifiedLocation='';state.activeLocation='';setStep('location');save();render();$('locationBarcode').focus();toast('请扫描新的库位码')};
+$('backLocationStep').onclick=()=>{verifiedLocation='';state.activeLocation='';if(camera){$('cameraBtn').click()}setStep('location');save();render()};
+$('locationCamera').onclick=()=>{cameraMode='location';if(camera){toast('摄像头已开启，请扫描库位码');return}$('cameraBtn').click()};$('cameraBtn').addEventListener('click',()=>{if(!camera)cameraMode='sku'});
+// QRCode implementation is embedded below; no internet needed for A4 printing.
+function qrSvg(value){const qr=new InventoryQRCode(0,0);qr.addData(value);qr.make();const n=qr.getModuleCount(),pad=4,size=n+pad*2;let paths='';for(let y=0;y<n;y++)for(let x=0;x<n;x++)if(qr.isDark(y,x))paths+=`M${x+pad} ${y+pad}h1v1h-1z`;return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" shape-rendering="crispEdges" role="img" aria-label="库位二维码"><rect width="${size}" height="${size}" fill="white"/><path fill="black" d="${paths}"/></svg>`}
+let printKind='location';function printLocations(codes){printKind='location';document.body.classList.remove('sku-label-mode');document.body.classList.add('location-label-mode');$('skuPageSizeRule').textContent='@page{size:A4 landscape;margin:0}';$('printPage').querySelector('.print-head').textContent='DAFU 仓库库位二维码';$('doPrint').textContent='🖨 A4 打印 / 保存 PDF';$('closePrint').textContent='✕ 关闭打印页 · 返回库位设置';if(!codes.length)return toast('请先设置库位');$('printSheet').innerHTML=codes.map(l=>`<div class="print-label"><small>DAFU 仓库库位</small><div class="qr">${qrSvg('LOC:'+l)}</div><strong>${esc(l)}</strong><small>扫码进入该库位盘点</small></div>`).join('');document.body.classList.add('preview-print');$('printPage').style.display='block';window.scrollTo(0,0);}
+function printSkus(codes){printKind='sku';document.body.classList.remove('location-label-mode');document.body.classList.add('sku-label-mode');$('skuPageSizeRule').textContent='';$('printPage').querySelector('.print-head').textContent='DAFU 货号 / SKU 标签 · 100 × 150 mm';$('doPrint').textContent='🖨 100×150mm 打印 / 保存 PDF';$('closePrint').textContent='✕ 关闭打印页 · 返回货号设置';try{$('printSheet').innerHTML=codes.map(code=>`<div class="print-label"><small class="sku-dafu-brand">DAFU</small><div class="qr">${qrSvg(code)}</div><strong>${esc(code)}</strong><small>扫码盘点 · 同 SKU 自动累计</small></div>`).join('')}catch(e){toast('二维码生成失败，请检查货号长度');return} $('skuPrintModal').classList.add('hidden');document.body.classList.add('preview-print');$('printPage').style.display='block';window.scrollTo(0,0)}$('generateSkuPrint').onclick=()=>{const codes=[...new Set($('skuPrintInput').value.split(/\r?\n/).map(x=>x.trim().toUpperCase()).filter(Boolean))];if(!codes.length)return toast('请至少输入一个 SKU');if(codes.some(x=>x.length>80))return toast('单个 SKU 最多 80 个字符');printSkus(codes)}; $('printAllLocations').onclick=()=>{printLocations(state.locations);$('locationModal').classList.add('hidden')};$('doPrint').onclick=()=>{if(!$('printSheet').children.length){toast('请先生成二维码标签');return;}document.body.classList.add('preview-print');$('printPage').style.display='block';try{window.focus();window.print()}catch(e){toast('浏览器未能打开打印窗口，请按 Ctrl+P 手动打印')}};$('closePrint').onclick=()=>{$('printPage').style.display='none';document.body.classList.remove('preview-print','sku-label-mode','location-label-mode');$('skuPageSizeRule').textContent='';if(printKind==='sku'){$('skuPrintModal').classList.remove('hidden')}else{$('locationModal').classList.remove('hidden');renderLocations()}window.scrollTo(0,0)};
+// 增加每个库位单独打印按钮
+const oldRenderLocations=renderLocations;renderLocations=function(){oldRenderLocations();document.querySelectorAll('[data-use-location]').forEach(b=>{b.textContent='扫码启用';b.disabled=true});document.querySelectorAll('[data-remove-location]').forEach(b=>{const p=document.createElement('button');p.type='button';p.className='secondary';p.textContent='打印码';p.onclick=()=>{printLocations([b.dataset.removeLocation]);$('locationModal').classList.add('hidden')};b.before(p)})};
+showHome();
+render();renderLocations();})();
+</script><script defer="" src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script><section id="printPage"><h2 class="print-head">DAFU 仓库库位二维码</h2><div class="print-actions"><button class="primary" id="doPrint">🖨 A4 打印 / 保存 PDF</button><button class="secondary" id="closePrint">✕ 关闭打印页 · 返回库位设置</button></div><div class="print-sheet" id="printSheet"></div></section><script>
+/* 独立打印按钮保障：即使主程序部分初始化失败，也可触发打印。 */
 (function(){
- var splash=document.getElementById('launchSplash');
- var done=false;
- function closeSplash(){if(done)return;done=true;splash.classList.add('splash-out');splash.style.pointerEvents='none';setTimeout(function(){if(splash&&splash.parentNode)splash.remove()},550)}
- document.getElementById('skipSplash').addEventListener('click',closeSplash);
- setTimeout(closeSplash,1900);
+  var btn=document.getElementById('doPrint');
+  if(!btn)return;
+  btn.setAttribute('type','button');
+  btn.addEventListener('click',function(ev){
+    ev.stopImmediatePropagation();
+    var sheet=document.getElementById('printSheet');
+    if(!sheet||!sheet.children.length){alert('请先生成二维码标签');return;}
+    document.body.classList.add('preview-print');
+    document.getElementById('printPage').style.display='block';
+    try{window.focus();window.print();}catch(err){alert('无法打开打印对话框，请按 Ctrl+P 重试。');}
+  },true);
 })();
 </script>
-<div class="app"><header class="hero"><div class="brandrow"><img id="brandLogo" src="images/form-logonova1.png" alt="DAFU Logo" onerror="this.style.display='none';document.getElementById('brandFallback').style.display='flex'"><div id="brandFallback" class="brandfallback" style="display:none" aria-label="DAFU Logo">DAFU</div><h1>订单箱数核验系统</h1></div><p>仓库扫码 · 箱数核验 · 多人协作</p><div class="sheet"><div class="sheetline"><strong>📗 Google Sheets · 多人协作</strong><span id="cloudStatus" class="offline">● 未配置</span></div><div class="sub" id="taskDisplay">任务：本地任务　成员：本机操作员</div></div></header>
-<nav class="tabs"><button class="active" data-tab="scan">扫码录入</button><button data-tab="stats">订单统计</button><button data-tab="history">操作记录</button><button data-tab="exceptions">异常订单</button><button data-tab="archives">历史任务</button></nav>
-<main><section class="panel" id="tab-scan"><div class="scanbox"><h3>▣ 扫描订单条码 / 箱码</h3><div class="inputrow"><input id="barcode" inputmode="numeric" autocomplete="off" placeholder="输入8位订单号" maxlength="8"><button id="scanBtn">确认扫码</button></div><div class="keypad order-keypad hidden" id="orderKeypad" aria-label="订单号虚拟数字键盘"></div><div class="smallbuttons"><button id="toggleOrderKeypad" type="button" aria-expanded="false" aria-controls="orderKeypad">⌨ 打开数字键盘</button><button id="cameraBtn">📷 手机摄像头</button><button id="nextBtn">↻ 重新识别</button><button id="soundBtn" type="button">🔊 声音开启</button><button id="locateBtn" type="button">📍 定位箱子</button></div><div id="camera" class="camera hidden"></div><p class="hint">扫码枪可直接输入并回车。摄像头支持连续扫码：移开上一箱，再放入下一箱即可。请勿让同一箱持续停留在镜头前。</p></div><div id="orderArea"><div class="card"><p class="label">当前订单</p><p class="muted">请扫描8位订单号开始核验。</p></div></div><section class="panel" id="taskControl"><div class="card"><div class="row"><strong>任务管理</strong><span id="taskStateLabel" class="pill">进行中</span></div><p class="hint" id="taskStateDescription">核验完成后可以结束任务，停止所有扫码并保留统计和历史记录。</p><button id="taskManagerBtn" class="secondary" type="button">＋ 创建任务 / 添加任务 / 切换任务</button><button id="endTaskBtn" class="primary" type="button" style="background:#b52c37">■ 结束当前任务</button><button id="restoreTaskBtn" class="secondary hidden" type="button">↻ 重新开启上一个任务（恢复数据）</button><button id="reopenTaskBtn" class="secondary hidden" type="button">＋ 开始新任务（从零开始）</button></div></section><div class="card"><div class="row"><strong>任务统计</strong><span class="pill" id="taskName">本地任务</span></div><div class="stats" id="statsCompact"></div></div></section>
-<section class="panel hidden" id="tab-stats"><div class="card"><div class="row"><h3>订单统计</h3><button id="exportBtn">导出订单 CSV</button><button id="exportScansBtn">导出全任务扫码明细</button></div><div id="statsFull"></div></div></section>
-<section class="panel hidden" id="tab-history"><div class="card"><h3>操作记录</h3><div id="historyList"></div></div></section>
-<section class="panel hidden" id="tab-exceptions"><div class="card"><h3>异常订单</h3><div id="exceptionList"></div></div></section><section class="panel hidden" id="tab-archives"><div class="card"><h3>历史任务（已结束）</h3><p class="hint">结束任务后，当前统计清零，原有订单和逐箱扫码记录保存在这里。</p><div id="archiveList"></div></div></section></main><footer class="foot">本地数据自动保存 · 云端协作需连接你自己的 Apps Script 接口</footer></div>
-<div id="locateSuccessShade" class="modalshade hidden" role="alertdialog" aria-modal="true"><div class="modal" style="text-align:center;border:5px solid #37BEB0;padding:28px 18px"><div style="font-size:100px;line-height:1;color:#17a34a;font-weight:900">✓</div><h2 style="font-size:28px;color:#138447;margin:14px 0">定位成功！</h2><div id="locateSuccessOrder" style="font-size:30px;font-weight:900;letter-spacing:2px"></div><p style="color:#168451;font-size:18px;font-weight:700">已找到目标箱子</p><p class="hint">定位扫描不增加实际箱数</p><button id="locateSuccessClose" class="primary" type="button">确认 · 继续定位</button></div></div>
-<div id="locateShade" class="modalshade hidden" role="dialog" aria-modal="true"><div class="modal"><h2>📍 定位箱子 · 扫码寻找目标</h2><p class="hint">输入要寻找的 8 位订单号，点击「开始定位」。然后使用扫码枪或手机摄像头扫描箱码；扫中目标时会显示大绿色 ✓ 并播放专属成功音。定位期间不累计箱数。</p><input id="locateInput" inputmode="numeric" maxlength="8" placeholder="要定位的8位订单号" style="width:100%;padding:12px;border:1px solid #b5c8de;border-radius:8px;margin:8px 0"><button class="primary" id="locateSearch">开始定位</button><div id="locateResult" aria-live="polite" style="margin-top:12px;max-height:45vh;overflow:auto"></div><button class="secondary" id="locateClose">关闭</button></div></div>
-<div id="modalShade" class="modalshade hidden" role="dialog" aria-modal="true"><div class="modal"><h2>🔒 强制填写预估总箱数</h2><div class="notice danger">订单 <b id="modalOrder"></b> 正在扫描第 2 箱。第 1 箱已自动记录；必须填写预估总箱数，才能确认第 2 箱。</div><label class="label">预估总箱数 <b style="color:#cf2636">*</b></label><input id="estimateInput" inputmode="none" placeholder="请输入总箱数" readonly><div class="keypad" id="keypad"></div><button class="primary" id="saveEstimate">确认预估箱数并记录第2箱</button><button class="secondary" id="cancelEstimate">取消第2箱扫码</button></div></div>
-<div id="correctionShade" class="modalshade hidden" role="dialog" aria-modal="true"><div class="modal"><h2>🛠 扫码纠错 · 减少箱数</h2><p class="hint">误扫后可撤销指定订单最近的扫码记录。全任务扫码序号保留，已撤销的序号不重复使用。</p><label class="label">订单号</label><input id="correctionOrder" inputmode="numeric" maxlength="8" placeholder="8位订单号" style="width:100%;padding:12px;border:1px solid #b5c8de;border-radius:8px;margin:8px 0"><div id="correctionInfo" class="notice info">请输入订单号</div><label class="label">本次减少箱数</label><div class="row" style="margin:8px 0"><button class="secondary" id="correctionMinus" style="width:55px;margin:0">−</button><strong id="correctionCount" style="font-size:24px">1</strong><button class="secondary" id="correctionPlus" style="width:55px;margin:0">＋</button></div><label class="label">纠错原因</label><input id="correctionReason" placeholder="例如：重复扫描同一箱" style="width:100%;padding:12px;border:1px solid #b5c8de;border-radius:8px;margin:8px 0"><button class="primary" id="confirmCorrection">确认减少箱数</button><button class="secondary" id="cancelCorrection">取消</button></div></div><div id="settingsShade" class="modalshade hidden"><div class="modal setting"><div class="row"><h2>协作设置</h2><button id="closeSettings">✕</button></div><label>任务编号（日期 + 批次）<input id="taskInput" readonly placeholder="点击自动生成"></label><button type="button" class="secondary" id="generateTaskId">↻ 自动生成日期批次</button><label>操作人员 <b style="color:#cf2636">*</b><input id="memberInput" placeholder="必填：请输入操作人员姓名" autocomplete="off"></label><button type="button" class="secondary" id="openTaskManager">＋ 创建任务 / 添加任务 / 切换任务</button><label>Google Apps Script Web App URL<input id="endpointInput" placeholder="https://script.google.com/macros/s/.../exec"></label><p class="hint">仅填写地址不会自动实现协作。接口必须实现文末说明的读取和写入协议，并在服务器端保证原子计数、幂等与权限校验。未配置时使用本地存储。</p><button class="primary" id="saveSettings">保存设置</button><button class="secondary" id="syncBtn">尝试从云端读取</button><button class="secondary" id="clearBtn" style="color:#b32634">清空本机订单（不可恢复）</button></div></div><div id="taskManagerShade" class="modalshade hidden" role="dialog" aria-modal="true"><div class="modal setting"><div class="row"><h2>任务管理 · 日期与批次</h2><button type="button" id="closeTaskManager">✕</button></div><p class="hint">任务编号自动生成：YYYYMMDD-01、YYYYMMDD-02……；操作人员必填。创建新任务会保存当前任务，方便以后切换继续。</p><label>任务日期<input type="date" id="newTaskDate"></label><label>批次<input id="newTaskBatch" type="number" min="1" max="999" step="1" placeholder="批次"></label><button class="secondary" type="button" id="autoBatchBtn">自动生成当天下一批次</button><label>生成的任务编号<input id="newTaskCode" readonly></label><label>操作人员 <b style="color:#cf2636">*</b><input id="newTaskMember" placeholder="请输入操作人员姓名" autocomplete="off"></label><button class="primary" type="button" id="createTaskBtn">＋ 创建并进入任务</button><h3>已有任务（点击进入）</h3><div id="availableTasks"></div></div></div><div id="overLimitShade" class="modalshade hidden" role="alertdialog" aria-modal="true" aria-labelledby="overLimitTitle"><div class="modal"><div class="error-symbol">🚫</div><h2 id="overLimitTitle">超量提醒：实际箱数超过预估</h2><div class="error-details"><div>订单号：<strong id="overLimitOrder"></strong></div><div>预估总箱数：<strong id="overLimitEstimate"></strong></div><div>实际已扫箱数：<strong id="overLimitActual"></strong></div><div><b>本次扫码已计入实际箱数</b></div></div><p class="hint">实际箱数已继续累计，订单已标记为异常。请核对是否重复扫码或存在额外箱子。</p><button class="primary" id="closeOverLimit" type="button">我知道了</button></div></div>
-<div id="toast"></div>
 <script>
-(()=>{'use strict';const KEY='box_verify_full_v1';let state;try{state=JSON.parse(localStorage.getItem(KEY)||'null')}catch{}state=state&&Array.isArray(state.orders)&&Array.isArray(state.logs)?state:{orders:[],logs:[],task:'本地任务',member:'',endpoint:''};if(state.member==='本机操作员')state.member='';if(typeof state.taskEnded!=='boolean')state.taskEnded=false;if(!Array.isArray(state.archives))state.archives=[];let current='',pending='',camera=null,lastCamera='',busy=false;let locateTarget="",locateSuccessTimer=null;let audioCtx=null,soundOn=true,cameraArmed=true,cameraMisses=0,cameraLastHit=0,overTimer=null;const $=id=>document.getElementById(id);const now=()=>new Date().toLocaleString('zh-CN',{hour12:false});const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const persist=()=>localStorage.setItem(KEY,JSON.stringify(state));const find=id=>state.orders.find(x=>x.id===id);function toast(s){$('toast').textContent=s;$('toast').style.display='block';clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').style.display='none',3000)}const SCAN_ACTIONS=['首箱扫码','第二箱扫码并填写预估','扫描箱子','超量扫码'];
-// 为旧版日志补充全任务扫码序号；旧日志若已被清理，无法恢复丢失的序号。
-if(!Number.isSafeInteger(state.globalScanCounter)||state.globalScanCounter<0)state.globalScanCounter=0;
-for(const entry of [...state.logs].reverse())if(SCAN_ACTIONS.includes(entry.action)){if(!Number.isSafeInteger(entry.globalSeq)||entry.globalSeq<1)entry.globalSeq=++state.globalScanCounter;else state.globalScanCounter=Math.max(state.globalScanCounter,entry.globalSeq)}
-function log(action,id,detail=''){const entry={time:now(),member:state.member,action,id,detail};if(SCAN_ACTIONS.includes(action))entry.globalSeq=++state.globalScanCounter;state.logs.unshift(entry);state.logs=state.logs.slice(0,1500)}function boxScans(id){return state.logs.filter(x=>x.id===id&&SCAN_ACTIONS.includes(x.action)&&!x.voided).slice().reverse().map((x,i)=>({globalSeq:x.globalSeq??null,seq:(x.action==='首箱扫码'?1:x.action==='第二箱扫码并填写预估'?2:(Number((x.detail||'').match(/第\s*(\d+)\s*箱/)?.[1])||Number((x.detail||'').match(/实际\s*(\d+)\s*箱/)?.[1])||i+1)),time:x.time||'未知',member:x.member||'未知',over:x.action==='超量扫码',action:x.action,detail:x.detail||''}));}
-function boxDetails(o){const scans=boxScans(o.id);const missing=Math.max(0,o.actual-scans.length);const cancelled=state.logs.filter(x=>x.id===o.id&&x.voided&&SCAN_ACTIONS.includes(x.action)).sort((a,b)=>(a.globalSeq||0)-(b.globalSeq||0));return `<details class="box-detail"><summary>查看全任务扫码序号和时间（${scans.length} 条）</summary><div class="box-summary">按全任务扫码先后排序 · 当前已扫 ${o.actual} 箱${missing?` · 其中 ${missing} 箱无可追溯记录`:''}</div>${scans.length?scans.map(x=>`<div class="box-line"><b class="${x.over?'box-warning':''}">全任务第 ${x.globalSeq??'未知'} 码<br>本订单第 ${x.seq} 箱</b><div><div class="box-time">${escape(x.time)} ${x.over?'<span class="box-warning">⚠ 超量</span>':''}</div><div class="box-extra">操作人：${escape(x.member)}</div></div></div>`).join(''):'<p class="muted">暂无逐箱扫码记录</p>'}${cancelled.length?`<div class="box-summary">已撤销扫码：${cancelled.map(x=>`全任务第 ${x.globalSeq??'未知'} 码（${escape(x.voidReason||'误扫')}）`).join('、')}</div>`:''}</details>`}
-function stats(){return{total:state.orders.length,done:state.orders.filter(x=>x.done).length,active:state.orders.filter(x=>!x.done&&!x.exception).length,bad:state.orders.filter(x=>x.exception).length}}function statsHtml(){const s=stats();return[['订单总数',s.total,'#1d2e45'],['已完成',s.done,'#078237'],['进行中',s.active,'#238F84'],['异常',s.bad,'#d12b36']].map(([a,b,c])=>`<div class="stat"><span>${a}</span><strong style="color:${c}">${b}</strong></div>`).join('')}
-function render(){const ended=state.taskEnded;$('taskStateLabel').textContent=ended?'已结束':'进行中';$('taskStateDescription').textContent=ended?`任务已于 ${state.taskEndedAt||'未知时间'} 结束，当前统计已归零，历史记录请到「历史任务」查看；可重新开启原任务恢复数据，或开始全新任务。`:'核验完成后可结束任务，当前统计清零，原有数据移入历史任务。';$('endTaskBtn').classList.toggle('hidden',ended);$('reopenTaskBtn').classList.toggle('hidden',!ended);$('restoreTaskBtn').classList.toggle('hidden',!ended||!state.archives.length);$('barcode').disabled=ended;$('scanBtn').disabled=ended;$('nextBtn').disabled=ended;$('toggleOrderKeypad').disabled=ended;if(ended){$('orderKeypad').classList.add('hidden');$('toggleOrderKeypad').textContent='⌨ 打开数字键盘'}const s=stats();$('statsCompact').innerHTML=statsHtml();$('taskName').textContent=state.task;$('taskDisplay').textContent=`任务：${state.task}　成员：${state.member||'未填写（必填）'}`;$('cloudStatus').textContent=state.endpoint?'● 已配置接口（未验证）':'● 本地模式';$('cloudStatus').className=state.endpoint?'offline':'offline';const o=find(current);if(!o){$('orderArea').innerHTML='<div class="card"><p class="label">当前订单</p><p class="muted">请扫描8位订单号开始核验。</p></div>'}else{const hasEstimate=Number.isInteger(o.estimate)&&o.estimate>0;const pct=hasEstimate?Math.min(100,Math.round(o.actual/o.estimate*100)):0;$('orderArea').innerHTML=`<div class="card"><div class="notice ${o.exception?'danger':'success'}">${o.exception?'⚠ 该订单存在异常，请检查箱数':'✓ 订单已更新'}</div><div class="label">当前订单号</div><div class="order">${escape(o.id)}</div><div class="numbers"><div class="num"><span>预估总箱数</span><strong>${hasEstimate?o.estimate:"待填写"}</strong></div><div class="num"><span>实际已扫箱数</span><strong>${o.actual}</strong></div></div><div class="progressrow"><b>箱数进度</b><span>${hasEstimate?`${o.actual} / ${o.estimate} (${Math.round(o.actual/o.estimate*100)}%)`:`${o.actual} 箱 · 第2箱填写预估`}</span></div><div class="track"><div class="fill" style="width:${pct}%"></div></div><div class="notice ${o.exception?'danger':'success'}">${o.exception?'实际数量超过预估，已记录超出箱数，请核对':`第 ${o.actual} 箱已记录，${!hasEstimate?"第2箱扫码时强制填写预估总箱数":o.done?'订单已完成':'可继续扫描同一订单的下一箱'}`}</div><button class="primary" id="continueBtn">▣ 继续扫码（第 ${o.actual+1} 箱）</button><button class="secondary" id="correctBtn">🛠 扫码纠错 / 减少箱数</button><button class="secondary" id="finishBtn">✓ ${o.done?'取消完成标记':'完成该订单'}</button><div class="smallbuttons"><button id="editEstimateBtn">✎ 修改预估箱数</button><button id="exceptionBtn">⚠ ${o.exception?'取消异常':'标记异常'}</button></div></div>`;$('continueBtn').onclick=()=>{$('barcode').value=o.id;scan(o.id)};$('correctBtn').onclick=()=>openCorrection(o.id);$('finishBtn').onclick=()=>{if(state.taskEnded){toast('任务已结束，请先重新开启');return}o.done=!o.done;log(o.done?'完成订单':'取消完成',o.id);persist();render()};$('editEstimateBtn').onclick=()=>{if(state.taskEnded){toast('任务已结束，请先重新开启');return}const n=prompt('请输入新的预估总箱数（正整数）',o.estimate);if(n===null)return;if(!/^[1-9]\d*$/.test(n)||Number(n)>99999){toast('请输入有效的正整数');return}o.estimate=Number(n);o.exception=o.actual>o.estimate;log('修改预估',o.id,'新预估：'+n);persist();render()};$('exceptionBtn').onclick=()=>{if(state.taskEnded){toast('任务已结束，请先重新开启');return}o.exception=!o.exception;log(o.exception?'标记异常':'取消异常',o.id);persist();render()}}$('statsFull').innerHTML=`<button class="secondary" id="statsCorrectBtn">🛠 扫码纠错 / 减少箱数</button><div class="stats">${statsHtml()}</div>${state.orders.length?state.orders.map(o=>`<div class="record"><div class="row"><b>${escape(o.id)}</b><span class="pill">${o.done?'已完成':o.exception?'异常':'进行中'}</span></div><div class="muted">预估 ${o.estimate??"待填写"} 箱 · 已扫 ${o.actual} 箱</div>${boxDetails(o)}</div>`).join(''):'<p class="muted">暂无订单</p>'}`;$('statsCorrectBtn').onclick=()=>openCorrection(current||'');$('historyList').innerHTML=state.logs.length?state.logs.map(x=>`<div class="record"><b>${escape(x.action)}</b>　${escape(x.id)}<div class="muted">${escape(x.time)} · ${escape(x.member)} ${escape(x.detail)}</div></div>`).join(''):'<p class="muted">暂无操作记录</p>';$('exceptionList').innerHTML=state.orders.filter(o=>o.exception).map(o=>`<div class="record"><b>${escape(o.id)}</b><div class="muted">预估 ${o.estimate??"待填写"} · 实际 ${o.actual}</div></div>`).join('')||'<p class="muted">暂无异常订单</p>';$('archiveList').innerHTML=state.archives.length?state.archives.map((a,i)=>{const orders=Array.isArray(a.orders)?a.orders:[];const logs=Array.isArray(a.logs)?a.logs:[];const count=orders.reduce((n,o)=>n+(Number(o.actual)||0),0);return `<details class="record"><summary><b>${escape(a.task||'未命名任务')}</b> · ${escape(a.endedAt||'')}<div class="muted">${orders.length} 个订单 · ${count} 箱</div></summary>${orders.map(o=>{const scans=logs.filter(l=>l.id===o.id&&Number.isInteger(l.globalSeq)).sort((x,y)=>x.globalSeq-y.globalSeq);return `<details class="record"><summary><b>${escape(o.id)}</b> · 预估 ${o.estimate??'待填写'} · 实际 ${o.actual}</summary>${scans.map(l=>`<div class="muted">全任务第 ${l.globalSeq} 码 · ${escape(l.time||'')} · ${escape(l.member||'')} ${l.voided?'（已撤销）':''}</div>`).join('')||'<div class="muted">无可用逐箱记录</div>'}</details>`}).join('')}<button class="secondary" type="button" data-archive-export="${i}">导出本任务 CSV</button></details>`}).join(''):'<p class="muted">暂无已结束任务</p>';document.querySelectorAll('[data-archive-export]').forEach(b=>b.onclick=()=>{const a=state.archives[Number(b.dataset.archiveExport)];if(!a)return;const rows=[['订单号','预估箱数','实际箱数','状态'],...a.orders.map(o=>[o.id,o.estimate??'',o.actual,o.exception?'异常':o.done?'完成':'进行中'])];const csv='\ufeff'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));const link=document.createElement('a');link.href=url;link.download='历史任务_'+(a.task||'任务')+'.csv';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});}
-function unlockAudio(){if(!soundOn)return;try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});}catch(e){}}
-function beep(kind='ok'){if(!soundOn)return;try{unlockAudio();if(!audioCtx)return;const t=audioCtx.currentTime;const patterns={ok:{type:'square',notes:[[950,0,.075],[1450,.105,.11]],gain:.38},prompt:{type:'sine',notes:[[510,0,.32],[510,.40,.32],[510,.80,.32]],gain:.55},located:{type:'triangle',notes:[[880,0,.16],[1175,.20,.17],[1568,.42,.42]],gain:.58},error:{type:'sawtooth',notes:[[340,0,.24],[240,.30,.32]],gain:.36},key:{type:'sine',notes:[[480,0,.055]],gain:.12}};const cfg=patterns[kind]||patterns.ok;for(const [freq,offset,dur] of cfg.notes){const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();osc.type=cfg.type;osc.frequency.value=freq;gain.gain.setValueAtTime(.0001,t+offset);gain.gain.linearRampToValueAtTime(cfg.gain,t+offset+.012);gain.gain.exponentialRampToValueAtTime(.0001,t+offset+dur);osc.connect(gain);gain.connect(audioCtx.destination);osc.start(t+offset);osc.stop(t+offset+dur+.02)}}catch(e){}}
-function setLocateMode(target){locateTarget=target;$('locateBtn').textContent=target?'📍 定位中：'+target:'📍 定位箱子';$('locateBtn').style.background=target?'#d8f8e9':'';$('barcode').placeholder=target?'定位中：请扫描箱码':'输入8位订单号';$('locateShade').classList.add('hidden');if(target){$('barcode').value='';toast('定位模式已开启，扫描 '+target+'；不会增加箱数')}else toast('已退出定位模式')}
-$('locateBtn').onclick=()=>{$('locateInput').value=locateTarget;$('locateResult').innerHTML=locateTarget?'<div class="notice success">当前定位目标：'+escape(locateTarget)+'</div>':'<p class="muted">设置目标订单号后，直接扫码寻找。</p>';$('locateSearch').textContent=locateTarget?'更换定位目标':'开始定位';$('locateShade').classList.remove('hidden')};
-$('locateClose').onclick=()=>$('locateShade').classList.add('hidden');
-function locateScans(){const q=$('locateInput').value.trim();if(!/^\d{8}$/.test(q)){toast('请输入8位目标订单号');$('locateResult').innerHTML='<div class="notice danger">目标必须是8位订单号。</div>';return}setLocateMode(q)}
-$('locateSearch').onclick=locateScans;$('locateInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();locateScans()}});
-const exitLocate=document.createElement('button');exitLocate.type='button';exitLocate.className='secondary';exitLocate.textContent='退出定位模式';$('locateClose').before(exitLocate);exitLocate.onclick=()=>setLocateMode('');
-function locateScan(id){if(!/^\d{8}$/.test(id)){toast('请输入8位箱码');return}if(id===locateTarget){beep('located');$('locateSuccessOrder').textContent=id;$('locateSuccessShade').classList.remove('hidden');clearTimeout(locateSuccessTimer);locateSuccessTimer=setTimeout(()=>{$('locateSuccessShade').classList.add('hidden')},3200)}else{beep('error');toast('不是目标箱子：'+id+'；请继续寻找 '+locateTarget)}$('barcode').value=''}
-$('locateSuccessClose').onclick=()=>{$('locateSuccessShade').classList.add('hidden');clearTimeout(locateSuccessTimer)};
-$('soundBtn').onclick=()=>{soundOn=!soundOn;$('soundBtn').textContent=soundOn?'🔊 声音开启':'🔇 声音关闭';if(soundOn){unlockAudio();beep()}};
-document.addEventListener('pointerdown',unlockAudio,{passive:true});document.addEventListener('keydown',unlockAudio);
-function showOverLimit(o){$('overLimitOrder').textContent=o.id;$('overLimitEstimate').textContent=o.estimate;$('overLimitActual').textContent=o.actual;$('overLimitShade').classList.remove('hidden');$('barcode').value='';setOrderKeyboard(false);beep('error');clearTimeout(overTimer);overTimer=setTimeout(()=>{$('overLimitShade').classList.add('hidden')},1700);}
-$('closeOverLimit').onclick=()=>{clearTimeout(overTimer);$('overLimitShade').classList.add('hidden');};
-function showEstimate(id){beep('prompt');pending=id;$('modalOrder').textContent=id;$('estimateInput').value='';$('modalShade').classList.remove('hidden')}let correctionQty=1;
-function openCorrection(id=''){if(state.taskEnded){toast('任务已结束，不能纠错；请先重新开启任务');return}$('correctionOrder').value=id;$('correctionReason').value='';correctionQty=1;$('correctionCount').textContent='1';$('correctionShade').classList.remove('hidden');updateCorrectionInfo()}
-function updateCorrectionInfo(){const id=$('correctionOrder').value.trim(),o=find(id);$('correctionInfo').textContent=o?`订单 ${id} · 当前实际 ${o.actual} 箱 · 预估 ${o.estimate??'待填写'} 箱`:'请输入存在的8位订单号';$('correctionCount').textContent=correctionQty}
-$('correctionOrder').addEventListener('input',updateCorrectionInfo);
-$('correctionMinus').onclick=()=>{correctionQty=Math.max(1,correctionQty-1);updateCorrectionInfo()};
-$('correctionPlus').onclick=()=>{const o=find($('correctionOrder').value.trim());correctionQty=Math.min(o?.actual||1,correctionQty+1);updateCorrectionInfo()};
-$('cancelCorrection').onclick=()=>$('correctionShade').classList.add('hidden');
-$('confirmCorrection').onclick=()=>{const id=$('correctionOrder').value.trim(),o=find(id),reason=$('correctionReason').value.trim();if(!o){toast('找不到此订单');return}if(!reason){toast('请填写纠错原因');return}if(correctionQty>o.actual){toast('减少箱数不能超过实际箱数');return}const old=o.actual;const candidates=state.logs.filter(x=>x.id===id&&SCAN_ACTIONS.includes(x.action)&&!x.voided).sort((a,b)=>(b.globalSeq||0)-(a.globalSeq||0));const voided=[];for(const entry of candidates.slice(0,correctionQty)){entry.voided=true;entry.voidReason=reason;entry.voidBy=state.member;entry.voidTime=now();voided.push(entry.globalSeq)}o.actual-=correctionQty;o.exception=!!o.estimate&&o.actual>o.estimate;if(o.actual<2&&o.estimate&&old>=2){/* 保留已填写的预估，不要求重复输入 */}if(o.actual===0){o.done=false}log('扫码纠错',id,`实际 ${old} → ${o.actual}，减少 ${correctionQty} 箱；原因：${reason}；撤销全任务序号：${voided.join('、')||'旧记录缺失'}`);current=id;persist();$('correctionShade').classList.add('hidden');render();toast(`纠错成功：${id} 实际箱数 ${old} → ${o.actual}`)};
-function scan(raw){if(!state.member||!state.member.trim()){toast('请先填写操作人员（必填），再开始扫码');settings();$('memberInput').focus();return}if(locateTarget){locateScan(String(raw||'').trim());return}if(state.taskEnded){toast('任务已结束，禁止继续扫码；如需修改请先重新开启任务');return}if(busy)return;const id=String(raw||'').trim();if(!/^\d{8}$/.test(id)){toast('请输入8位数字订单号');return}if(pending){toast('请先填写当前订单的预估总箱数');return}const o=find(id);if(!o){state.orders.unshift({id,estimate:null,actual:1,done:false,exception:false,created:now()});current=id;log('首箱扫码',id,'第 1 箱自动计入，第二箱需填写预估');beep('ok');persist();render();toast('第1箱已记录；第2箱扫码时填写预估总箱数');$('barcode').value='';return}if(o.actual===0){o.actual=1;current=id;log('首箱扫码',id,'纠错后重新记录第1箱');beep('ok');persist();render();toast('第1箱已重新记录');$('barcode').value='';return}if(!Number.isInteger(o.estimate)||o.estimate<1){current=id;showEstimate(id);return}if(o.done){beep('error');toast('订单已标记完成，请先取消完成标记');current=id;render();return}o.actual++;current=id;if(o.actual>o.estimate){o.exception=true;log('超量扫码',id,`实际 ${o.actual} 箱，预估 ${o.estimate} 箱`);persist();render();showOverLimit(o)}else{log('扫描箱子',id,`第 ${o.actual} 箱`);beep('ok');persist();render();toast(`订单 ${id}：已记录第 ${o.actual} 箱`)}$('barcode').value=''}
-function saveEstimate(){if(state.taskEnded){toast('任务已结束，无法记录第2箱');return}const v=$('estimateInput').value;if(!/^[1-9]\d*$/.test(v)||Number(v)>99999){toast('必须填写有效的预估总箱数（1～99999）');return}const id=pending;if(!id)return;let o=find(id);if(!o){toast('订单不存在，请先扫描第1箱');return}else{if(Number(v)<2){toast('已扫描第2箱，预估总箱数不能小于2');return}o.estimate=Number(v);o.actual=2;beep('ok');log('第二箱扫码并填写预估',id,`预估 ${v} 箱，实际第 2 箱`)}pending='';current=id;$('modalShade').classList.add('hidden');persist();render();toast('预估已保存，第2箱已计入，当前实际2箱')}
-for(const k of ['1','2','3','4','5','6','7','8','9','清空','0','⌫']){const b=document.createElement('button');b.type='button';b.textContent=k;b.setAttribute('aria-label',k==='⌫'?'删除最后一位':k);b.onclick=()=>{const i=$('barcode');i.value=k==='清空'?'':k==='⌫'?i.value.slice(0,-1):i.value.length<8?i.value+k:i.value;if(i.value.length===8)toast('已输入8位订单号，点击确认扫码');};$('orderKeypad').appendChild(b)}
-const orderKeyboard=$('orderKeypad'),orderKeyboardToggle=$('toggleOrderKeypad');
-function setOrderKeyboard(open){orderKeyboard.classList.toggle('hidden',!open);orderKeyboardToggle.textContent=open?'⌨ 收起数字键盘':'⌨ 打开数字键盘';orderKeyboardToggle.setAttribute('aria-expanded',String(open));}
-orderKeyboardToggle.onclick=()=>setOrderKeyboard(orderKeyboard.classList.contains('hidden'));
-$('barcode').addEventListener('click',()=>setOrderKeyboard(true));
-$('scanBtn').onclick=()=>{scan($('barcode').value);setOrderKeyboard(false)};$('barcode').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();scan($('barcode').value);setOrderKeyboard(false)}});$('saveEstimate').onclick=saveEstimate;$('cancelEstimate').onclick=()=>{pending='';$('modalShade').classList.add('hidden');toast('已取消第2箱扫码，第1箱仍保留')};for(const k of ['1','2','3','4','5','6','7','8','9','清空','0','⌫']){const b=document.createElement('button');b.textContent=k;b.onclick=()=>{beep('key');const i=$('estimateInput');i.value=k==='清空'?'':k==='⌫'?i.value.slice(0,-1):i.value.length<5?i.value+k:i.value};$('keypad').appendChild(b)}$('nextBtn').onclick=()=>{cameraArmed=true;cameraMisses=0;lastCamera='';$('barcode').focus();toast('已准备识别下一箱')};document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('main>section').forEach(x=>x.classList.toggle('hidden',x.id!=='tab-'+b.dataset.tab));render()});
-$('cameraBtn').onclick=async()=>{if(state.taskEnded&&!camera){toast('任务已结束，摄像头扫码已停用');return}if(camera){cameraArmed=false;await camera.stop().catch(()=>{});camera.clear();camera=null;$('camera').classList.add('hidden');$('cameraBtn').textContent='📷 手机摄像头';return}if(!window.Html5Qrcode){toast('摄像头组件未加载，请联网后重试，或使用扫码枪');return}try{unlockAudio();cameraArmed=true;cameraMisses=0;$('camera').classList.remove('hidden');camera=new Html5Qrcode('camera');await camera.start({facingMode:'environment'},{fps:10,qrbox:{width:230,height:160}},code=>{const id=String(code).trim();if((pending&&!locateTarget)||!$('overLimitShade').classList.contains('hidden')||!$('locateSuccessShade').classList.contains('hidden'))return;if(!cameraArmed)return;cameraArmed=false;cameraMisses=0;cameraLastHit=Date.now();lastCamera=id;scan(id)},()=>{if(cameraArmed)return;cameraMisses++;if(cameraMisses>=5&&Date.now()-cameraLastHit>=650){cameraArmed=true;cameraMisses=0;lastCamera='';}});$('cameraBtn').textContent='关闭摄像头'}catch(e){camera=null;$('camera').classList.add('hidden');toast('摄像头无法启动：请检查权限及 HTTPS 环境')}};
-function csv(){const lines=[['订单号','预估总箱数','实际已扫箱数','是否完成','是否异常','创建时间'],...state.orders.map(o=>[o.id,o.estimate,o.actual,o.done?'是':'否',o.exception?'是':'否',o.created])];const data='\ufeff'+lines.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'text/csv;charset=utf-8'}));a.download='订单箱数核验_'+new Date().toISOString().slice(0,10)+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}$('exportBtn').onclick=csv;
-function exportScans(){const rows=[['全任务第几码','订单号','本订单第几箱','扫码时间','操作成员','状态','备注']];for(const o of state.orders){for(const x of boxScans(o.id)){rows.push([x.globalSeq??'',o.id,x.seq,x.time,x.member,x.over?'超出预估':'正常',x.detail])}}rows.splice(1,rows.length-1,...rows.slice(1).sort((a,b)=>Number(a[0])-Number(b[0])));const content='\ufeff'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');const url=URL.createObjectURL(new Blob([content],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='逐箱扫码顺序与时间_'+new Date().toISOString().slice(0,10)+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}$('exportScansBtn').onclick=exportScans;
-// Cloud configuration is deliberately not represented as connected until a verified adapter is supplied.
-const settings=()=>{$('taskInput').value=state.task;$('memberInput').value=state.member||'';$('endpointInput').value=state.endpoint;$('settingsShade').classList.remove('hidden')};document.querySelector('.hero h1').onclick=settings;document.querySelector('.sheet').onclick=settings;$('closeSettings').onclick=()=>$('settingsShade').classList.add('hidden');$('saveSettings').onclick=()=>{if(!$('memberInput').value.trim()){toast('操作人员为必填项');$('memberInput').focus();return}state.member=$('memberInput').value.trim();state.endpoint=$('endpointInput').value.trim();persist();$('settingsShade').classList.add('hidden');render();toast('设置已保存；云端同步需配套服务端接口')};$('syncBtn').onclick=()=>toast('尚未接入已验证的云端协议；不会用云端数据覆盖本地记录');$('clearBtn').onclick=()=>{if(confirm('确定永久清空本机全部订单和操作记录？')){state.orders=[];state.logs=[];state.globalScanCounter=0;current='';persist();render();toast('本地数据已清空')}};
-$('endTaskBtn').onclick=async()=>{if(pending){toast('请先确认或取消第2箱预估输入');return}if(!state.orders.length&&!state.logs.length){toast('当前任务没有扫码记录，无需结束');return}const total=state.orders.reduce((n,o)=>n+o.actual,0);if(!confirm(`确定结束当前任务「${state.task}」？\n订单 ${state.orders.length} 个，实际扫码 ${total} 箱。\n结束后当前统计立即归零，原始记录保存到「历史任务」。`))return;const endedAt=now();state.archives.unshift({task:state.task,member:state.member,endedAt,orders:JSON.parse(JSON.stringify(state.orders)),logs:JSON.parse(JSON.stringify(state.logs)),globalScanCounter:state.globalScanCounter||0});state.orders=[];state.logs=[];state.globalScanCounter=0;state.taskEnded=true;state.taskEndedAt=endedAt;current='';pending='';$('barcode').value='';persist();if(camera){try{await camera.stop()}catch(e){}try{camera.clear()}catch(e){}camera=null;$('camera').classList.add('hidden');$('cameraBtn').textContent='📷 手机摄像头'}render();toast('任务已结束，当前统计已归零；历史记录已保存')};$('restoreTaskBtn').onclick=()=>{if(!state.taskEnded){toast('当前任务正在进行中');return}const last=state.archives[0];if(!last){toast('没有可以恢复的历史任务');return}if(!confirm(`确定重新开启「${last.task}」？\n将恢复原有订单、扫码序号、扫码时间及纠错记录，并继续累计。\n此任务将从历史任务列表移回当前任务。`))return;state.orders=JSON.parse(JSON.stringify(last.orders||[]));state.logs=JSON.parse(JSON.stringify(last.logs||[]));state.globalScanCounter=last.globalScanCounter||0;state.task=last.task;state.member=last.member||state.member;state.archives.shift();state.taskEnded=false;state.taskEndedAt='';current='';pending='';persist();render();toast('原任务已重新开启，扫码记录及序号已恢复')};// 日期批次任务管理：每个任务独立保存订单、全局扫码序号与操作日志。
-const localDate=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
-const dateCode=d=>d.replace(/-/g,'');
-const knownTasks=()=>[state.task,...state.archives.map(a=>a.task)];
-function nextBatch(date){const prefix=dateCode(date)+'-';let max=0;for(const name of knownTasks()){if(String(name).startsWith(prefix)){const n=Number(String(name).slice(prefix.length));if(Number.isSafeInteger(n))max=Math.max(max,n)}}return max+1}
-function taskId(date,batch){return dateCode(date)+'-'+String(batch).padStart(2,'0')}
-function updateTaskCode(){const date=$('newTaskDate').value,batch=Number($('newTaskBatch').value);$('newTaskCode').value=date&&Number.isSafeInteger(batch)&&batch>=1&&batch<=999?taskId(date,batch):''}
-function snapshot(status='暂停'){return{task:state.task,member:state.member||'',endedAt:state.taskEndedAt||'',status,orders:JSON.parse(JSON.stringify(state.orders)),logs:JSON.parse(JSON.stringify(state.logs)),globalScanCounter:state.globalScanCounter||0}}
-function loadTask(t){state.task=t.task;state.member=t.member||'';state.orders=JSON.parse(JSON.stringify(t.orders||[]));state.logs=JSON.parse(JSON.stringify(t.logs||[]));state.globalScanCounter=t.globalScanCounter||0;state.taskEnded=false;state.taskEndedAt='';current='';pending='';$('barcode').value='';persist();render()}
-function saveCurrentBeforeSwitch(){if(state.taskEnded)return;if(state.orders.length||state.logs.length||/^\d{8}-\d+$/.test(state.task)){state.archives.unshift(snapshot('暂停'))}}
-function openTaskManager(){const date=localDate();$('newTaskDate').value=date;$('newTaskBatch').value=nextBatch(date);$('newTaskMember').value=state.member||'';updateTaskCode();renderAvailableTasks();$('taskManagerShade').classList.remove('hidden')}
-function renderAvailableTasks(){const items=state.archives.map((a,i)=>`<div class="record"><div class="row"><div><b>${escape(a.task)}</b><div class="muted">${escape(a.status||'已结束')} · ${escape(a.member||'未填写')} · ${(a.orders||[]).length} 个订单</div></div><button class="secondary" type="button" data-task-index="${i}" style="width:auto;margin:0">进入任务</button></div></div>`).join('');$('availableTasks').innerHTML=items||'<p class="muted">暂无其他任务</p>';document.querySelectorAll('[data-task-index]').forEach(btn=>btn.onclick=()=>{const idx=Number(btn.dataset.taskIndex),t=state.archives[idx];if(!t)return;if(!confirm(`切换到任务「${t.task}」？当前任务数据会先保存。`))return;state.archives.splice(idx,1);saveCurrentBeforeSwitch();loadTask(t);$('taskManagerShade').classList.add('hidden');toast('已进入任务：'+t.task)})}
-$('taskManagerBtn').onclick=openTaskManager;$('openTaskManager').onclick=()=>{$('settingsShade').classList.add('hidden');openTaskManager()};$('closeTaskManager').onclick=()=>$('taskManagerShade').classList.add('hidden');
-$('newTaskDate').onchange=()=>{$('newTaskBatch').value=nextBatch($('newTaskDate').value);updateTaskCode()};$('newTaskBatch').oninput=updateTaskCode;$('autoBatchBtn').onclick=()=>{$('newTaskBatch').value=nextBatch($('newTaskDate').value);updateTaskCode()};
-$('generateTaskId').onclick=()=>{$('taskInput').value=taskId(localDate(),nextBatch(localDate()));toast('已生成新任务编号，请点击创建任务以启用')};
-$('createTaskBtn').onclick=()=>{const name=$('newTaskCode').value,member=$('newTaskMember').value.trim();if(!name){toast('请选择有效日期与批次');return}if(!member){toast('操作人员不能为空');$('newTaskMember').focus();return}if(knownTasks().includes(name)){toast('该日期批次已存在，请选择其他批次');return}if(!confirm(`创建任务 ${name}，操作人员：${member}？\n当前任务如有数据会自动保存，扫码序号从第1码开始。`))return;saveCurrentBeforeSwitch();loadTask({task:name,member,orders:[],logs:[],globalScanCounter:0});$('taskManagerShade').classList.add('hidden');toast('新任务创建成功：'+name)};
-$('reopenTaskBtn').onclick=openTaskManager;
-render();})();
-</script><script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" defer></script></body></html>
+/* Independent print-preview close handler: works even if the inventory app fails to initialize. */
+(function(){
+  'use strict';
+  var close = document.getElementById('closePrint');
+  if (!close) return;
+  close.setAttribute('type','button');
+  close.addEventListener('click', function(event){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    var page = document.getElementById('printPage');
+    var skuModal = document.getElementById('skuPrintModal');
+    var locationModal = document.getElementById('locationModal');
+    var isSku = document.body.classList.contains('sku-label-mode') || /货号|SKU/.test(close.textContent);
+    if (page) { page.style.setProperty('display','none','important'); }
+    document.body.classList.remove('preview-print','sku-label-mode','location-label-mode');
+    document.body.style.overflow = '';
+    var rule = document.getElementById('skuPageSizeRule');
+    if (rule) rule.textContent = '';
+    var target = isSku ? skuModal : locationModal;
+    if (target) {
+      target.classList.remove('hidden');
+      target.style.removeProperty('display');
+    }
+    window.scrollTo(0,0);
+  }, true);
+})();
+</script>
+
+<div class="modalshade hidden" id="clearLocalModal"><div class="modal">
+<h2>清除 DAFU 本地数据</h2>
+<p class="notice danger"><strong>注意：</strong>这会删除当前浏览器内保存的 DAFU 盘点任务、库位、SKU 箱数、历史任务和操作记录。无法撤销。不会清除其他网站的数据。</p>
+<button class="primary" id="backupBeforeClear" type="button">下载 JSON 数据备份（可选）</button>
+<p class="hint" id="clearBackupStatus">可选：先下载 JSON 备份；也可以直接输入确认码清除。</p>
+<label class="field">输入「123456」以确认<input id="clearLocalConfirm" autocomplete="off" placeholder="请输入：123456"/></label>
+<button class="primary" id="confirmClearLocal" type="button" disabled style="background:#b52c37">永久清除本地盘点数据</button>
+<button class="secondary full" id="cancelClearLocal" type="button">取消，保留数据</button>
+</div></div>
+<script>
+/* DAFU-only local storage reset; backup optional, typed confirmation required. */
+(function(){'use strict';
+const key='dafu_inventory_count_v1';
+const byId=id=>document.getElementById(id);
+
+const modal=byId('clearLocalModal'),input=byId('clearLocalConfirm'),clear=byId('confirmClearLocal');
+function refresh(){clear.disabled=input.value.trim()!=='123456';}
+byId('openClearLocal').addEventListener('click',()=>{input.value='';refresh();byId('clearBackupStatus').textContent='可选：先下载 JSON 备份；也可以直接输入确认码清除。';modal.classList.remove('hidden');});
+byId('cancelClearLocal').addEventListener('click',()=>modal.classList.add('hidden'));
+input.addEventListener('input',refresh);
+byId('backupBeforeClear').addEventListener('click',()=>{
+ try{
+ const raw=localStorage.getItem(key);
+ const data={format:'DAFU inventory local backup',exportedAt:new Date().toISOString(),storageKey:key,rawData:raw,parsedData:raw?JSON.parse(raw):null};
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'});
+ const url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='DAFU_库存盘点备份_'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+ byId('clearBackupStatus').textContent='已发起备份下载；下载并非清除的必要条件。';refresh();
+ }catch(e){refresh();alert('备份失败：'+e.message+'。仍可输入 123456 直接清除，但数据可能无法恢复。');}
+});
+clear.addEventListener('click',()=>{
+ if(input.value.trim()!=='123456')return;
+ if(!window.confirm('最后确认：确定永久清除本机 DAFU 盘点数据吗？如果未下载备份，数据可能无法恢复。'))return;
+ try{localStorage.removeItem(key);alert('DAFU 本地盘点数据已清除，页面即将重新加载。');location.reload();}
+ catch(e){alert('清除失败：'+e.message);}
+});
+})();
+</script>
+
+<style id="dafuPdfReportStyles">
+#dafuPdfReport{display:none;background:white;color:#172b37;font-family:Arial,'Microsoft YaHei',sans-serif}
+body.dafu-pdf-report #dafuPdfReport{display:block;position:fixed;inset:0;z-index:300;overflow:auto;padding:24px;background:#f2f8f6}
+#dafuPdfReport .pdf-paper{max-width:1100px;margin:auto;background:white;padding:25px;border-radius:10px}
+#dafuPdfReport .pdf-actions{display:flex;gap:10px;margin-bottom:20px}
+#dafuPdfReport .pdf-actions button{flex:1}
+#dafuPdfReport h1{margin:0;font-size:25px;color:#167d73}
+#dafuPdfReport .pdf-meta{font-size:12px;color:#52667e;line-height:1.8;margin:12px 0}
+#dafuPdfReport .pdf-table-wrap{overflow:auto}
+#dafuPdfReport table{width:100%;border-collapse:collapse;font-size:11px;table-layout:auto}
+#dafuPdfReport th,#dafuPdfReport td{border:1px solid #b9d4ce;padding:7px 8px;text-align:left;overflow-wrap:anywhere}
+#dafuPdfReport th{background:#eaf9f6;color:#174b45;font-weight:800}
+#dafuPdfReport td.num{text-align:right;background:none;border-radius:0;font-size:11px}
+#dafuPdfReport .pdf-summary{font-weight:800;margin:10px 0 16px}
+@media print{
+ @page{size:A4 landscape;margin:12mm}
+ html,body{margin:0!important;padding:0!important;overflow:visible!important;height:auto!important}
+ body.dafu-pdf-report .app,body.dafu-pdf-report #printPage,body.dafu-pdf-report .modalshade,body.dafu-pdf-report #toast{display:none!important}
+ body.dafu-pdf-report #dafuPdfReport{display:block!important;position:static!important;inset:auto!important;overflow:visible!important;padding:0!important;margin:0!important;background:white!important;width:100%!important}
+ body.dafu-pdf-report #dafuPdfReport .pdf-paper{padding:0!important;margin:0!important;max-width:none!important;border-radius:0!important}
+ body.dafu-pdf-report #dafuPdfReport .pdf-actions{display:none!important}
+ body.dafu-pdf-report #dafuPdfReport .pdf-table-wrap{overflow:visible!important}
+ body.dafu-pdf-report #dafuPdfReport table{width:100%!important;font-size:9pt!important}
+ body.dafu-pdf-report #dafuPdfReport thead{display:table-header-group}
+ body.dafu-pdf-report #dafuPdfReport tr{break-inside:avoid;page-break-inside:avoid}
+ body.dafu-pdf-report #dafuPdfReport th,body.dafu-pdf-report #dafuPdfReport td{padding:5px 6px!important}
+}
+</style>
+<section id="dafuPdfReport" aria-label="库存盘点 PDF 报表"><div class="pdf-paper">
+ <div class="pdf-actions"><button class="primary" type="button" id="dafuPdfPrint">🖨 打印 / 保存为 PDF</button><button class="secondary" type="button" id="dafuPdfClose">✕ 关闭报表</button></div>
+ <h1>DAFU 库存盘点报表</h1><div class="pdf-meta" id="dafuPdfMeta"></div><div class="pdf-summary" id="dafuPdfSummary"></div>
+ <div class="pdf-table-wrap"><table><thead id="dafuPdfHead"></thead><tbody id="dafuPdfBody"></tbody></table></div>
+ </div></section>
+<script>
+(function(){'use strict';
+const $pdf=id=>document.getElementById(id);
+const escapePdf=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+// PDF module runs in its own scope: read the persisted inventory state explicitly.
+const PDF_STORAGE_KEY='dafu_inventory_count_v1';
+function pdfLocationRows(p){
+ const locs=p.locations&&typeof p.locations==='object'?p.locations:{};
+ const entries=Object.entries(locs).filter(([k,v])=>k&&Number(v)>0).sort((a,b)=>a[0].localeCompare(b[0]));
+ const allocated=entries.reduce((n,[,v])=>n+Number(v),0);
+ const actual=Number(p.actual)||0;
+ if(!entries.length&&actual>0)entries.push([p.location||'未分配库位',actual]);
+ else if(allocated<actual)entries.push(['未分配库位',actual-allocated]);
+ return entries;
+}
+function pdfMergeSkuRows(items){
+ const map=new Map();
+ for(const source of items){
+  const code=String(source.code||'').trim().toUpperCase();
+  if(!code)continue;
+  let p=map.get(code);
+  if(!p){p={...source,code,locations:{},actual:0};map.set(code,p)}
+  for(const [loc,n] of pdfLocationRows(source))p.locations[loc]=(Number(p.locations[loc])||0)+Number(n);
+  p.actual+=(Number(source.actual)||0);
+ }
+ return [...map.values()];
+}
+const btn=$pdf('exportPdfBtn');
+btn.addEventListener('click',()=>{
+ try{
+  const current=JSON.parse(localStorage.getItem(PDF_STORAGE_KEY)||'null');
+  if(!current||!current.task){alert('请先进入盘点任务');return;}
+  const products=pdfMergeSkuRows(current.products||[]);
+  const locations=[...new Set(products.flatMap(p=>pdfLocationRows(p).map(([loc])=>loc)))].sort((a,b)=>a.localeCompare(b,'zh-CN',{numeric:true}));
+  const headers=['Task ID','SKU','Total Boxes',...locations.map(loc=>'Location '+loc)];
+  $pdf('dafuPdfHead').innerHTML='<tr>'+headers.map(h=>'<th>'+escapePdf(h)+'</th>').join('')+'</tr>';
+  $pdf('dafuPdfBody').innerHTML=products.map(p=>{
+   const counts=Object.fromEntries(pdfLocationRows(p));
+   const values=[current.task,p.code,Number(p.actual)||0,...locations.map(loc=>Number(counts[loc]||0))];
+   return '<tr>'+values.map((v,i)=>'<td'+(i>=2?' class="num"':'')+'>'+escapePdf(v)+'</td>').join('')+'</tr>';
+  }).join('')||'<tr><td colspan="'+headers.length+'">暂无盘点记录</td></tr>';
+  const now=new Date();
+  $pdf('dafuPdfMeta').textContent='Task ID: '+current.task+'   |   Operator: '+(current.member||'—')+'   |   Exported: '+now.toLocaleString();
+  $pdf('dafuPdfSummary').textContent='SKU: '+products.length+'    |    Total Boxes: '+products.reduce((sum,p)=>sum+(Number(p.actual)||0),0)+'    |    Locations: '+locations.length;
+  document.body.classList.add('dafu-pdf-report');
+ }catch(e){alert('生成 PDF 报表失败：'+e.message)}
+});
+$pdf('dafuPdfPrint').addEventListener('click',()=>{try{window.print()}catch(e){alert('请按 Ctrl+P 打开打印窗口，并选择另存为 PDF')}});
+$pdf('dafuPdfClose').addEventListener('click',()=>document.body.classList.remove('dafu-pdf-report'));
+})();
+</script>
+</body></html>
