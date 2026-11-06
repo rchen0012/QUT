@@ -1726,6 +1726,7 @@ async function sharedAction(mode,code){
     const record=await cloudRequest(payload);
     if(!record?.data||!record.code)throw Error('云端返回的任务格式无效');
     applyShared(record,mode);
+    if(mode==='join'&&!record.data.ended)showWork();
   }catch(error){
     taskStatus(error.message);
     toast(error.message);
@@ -1738,7 +1739,7 @@ $('joinSharedTask').onclick=async()=>{
   if(!code)return;
   if(!/^(?:[0-9]{8}|[A-F0-9]{32})$/.test(code))return toast('请输入 8 位数字任务码');
   if(state.sharedTask?.code===code){
-    if(JSON.stringify(taskData())===state.sharedTask.baseline)return void sharedAction('sync',code);
+    if(JSON.stringify(taskData())===state.sharedTask.baseline)return void sharedAction('join',code);
     if(!confirm('读取云端版本？本机改动会先保存到历史任务。'))return;
     state.archives.unshift(snapshot('同步前备份'));save();
   }
